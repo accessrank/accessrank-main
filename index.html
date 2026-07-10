@@ -159,8 +159,8 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .check-anim { stroke-dasharray: 16; stroke-dashoffset: 16; animation: dr14 0.6s var(--ease-out) forwards; }
 @keyframes dr14 { 0% { stroke-dashoffset: 16; } 60%, 100% { stroke-dashoffset: 0; } }
 
-.site .marquee { margin-top: 26px; background: linear-gradient(110deg, #3B82F6 0%, #2563EB 28%, #1E40AF 62%, #0C2A6B 100%); background-size: 200% 100%; animation: marqueeBgShift 14s ease-in-out infinite alternate; color: #FFFFFF; padding: 10px 0; overflow: hidden; position: relative; }
-.site .marquee::before { content: ''; position: absolute; inset: 0; background: radial-gradient(60% 180% at 18% 50%, rgba(96, 165, 250, 0.55), transparent 60%), radial-gradient(50% 160% at 82% 50%, rgba(12, 26, 70, 0.55), transparent 65%); pointer-events: none; mix-blend-mode: screen; }
+.site .marquee { margin-top: 26px; background: linear-gradient(110deg, #2563EB 0%, #1E40AF 55%, #0C2A6B 100%); background-size: 200% 100%; animation: marqueeBgShift 14s ease-in-out infinite alternate; color: #FFFFFF; padding: 10px 0; overflow: hidden; position: relative; }
+.site .marquee::before { content: ''; position: absolute; inset: 0; background: radial-gradient(55% 170% at 85% 50%, rgba(8, 20, 55, 0.55), transparent 65%); pointer-events: none; }
 .site .marquee-track { position: relative; }
 @keyframes marqueeBgShift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 .site .marquee-track { display: flex; gap: 56px; animation: mq14 28s linear infinite; white-space: nowrap; width: max-content; }
@@ -223,7 +223,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0; }
 .site .features-note { font-size: 11px; line-height: 1.6; color: var(--text-fainter); font-style: italic; margin: 22px auto 0; max-width: 820px; text-align: center; text-wrap: pretty; }
 
-.site .stats-strip { padding: 28px var(--edge); background: linear-gradient(110deg, #3B82F6 0%, #2563EB 32%, #1E40AF 68%, #0C2A6B 100%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.site .stats-strip { padding: 28px var(--edge); background: linear-gradient(110deg, #2563EB 0%, #1E40AF 55%, #0C2A6B 100%); display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
 .site .stat { text-align: center; padding: 0 20px; position: relative; }
 .site .stat + .stat::before { content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%); height: 38px; width: 1px; background: rgba(255, 255, 255, 0.18); }
 .site .stat-num { font-size: 34px; font-weight: 800; letter-spacing: -1.5px; color: #FFFFFF; line-height: 1; margin-bottom: 6px; }
@@ -539,9 +539,9 @@ html, body { margin: 0; padding: 0; background: #14142A; }
   </section>
 
   <div class="stats-strip">
-    <div class="stat"><div class="stat-num">+41%</div><div class="stat-label">Organic-traffic lift is common post-fix; results vary by site.</div></div>
-    <div class="stat"><div class="stat-num">2&ndash;4 wks</div><div class="stat-label">to a higher score &mdash; as fast as 7 days (typical)</div></div>
-    <div class="stat"><div class="stat-num">$30K+</div><div class="stat-label">avg ADA settlement &mdash; built to keep you off the target list<br/><span class="stat-src">&mdash; Accessible.org lawsuit analysis</span></div></div>
+    <div class="stat"><div class="stat-num">+23%</div><div class="stat-label">avg. more organic traffic for higher-accessibility-score sites<br/><span class="stat-src">&mdash; Semrush, 2025 &mdash; correlational, varies by site</span></div></div>
+    <div class="stat"><div class="stat-num">2&ndash;4 wks</div><div class="stat-label">to a higher score (7-day express lane if you've been served)</div></div>
+    <div class="stat"><div class="stat-num">$30K+</div><div class="stat-label">avg. ADA settlement + legal fees per claim<br/><span class="stat-src">&mdash; Accessible.org (2024)</span></div></div>
   </div>
 
 
@@ -607,7 +607,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
         <div class="price-credit-line"></div>
         <div class="price-monthly">Then <strong>$79/mo</strong> to hold your score <span class="ann">(or $790/yr)</span></div>
         <div class="price-desc">For single-line stores with up to 10 SKUs.</div>
-        <ul class="price-features"><li>Source-code remediation against WCAG 2.2 AA</li><li>Monthly re-audit + VPAT + accessibility conformance letter</li><li>SEO optimization</li></ul>
+        <ul class="price-features"><li>Source-code remediation against WCAG 2.2 AA</li><li>Monthly re-audit + VPAT + accessibility conformance summary</li><li>SEO optimization</li></ul>
         <a href="signup.html?plan=starter" class="price-cta">Raise my score</a>
       </div>
       <div class="price-card featured">
