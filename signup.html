@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Start your free trial — Accessrank</title>
-  <meta name="description" content="Start your 14-day Accessrank free trial. Raise your ADA/WCAG 2.2 score, avoid lawsuits, and lift your SEO.">
+  <meta name="description" content="Start your free Accessrank trial. Raise your ADA/WCAG 2.2 accessibility score and lift your SEO — see your score before you pay.">
   <meta name="theme-color" content="#14142A">
   <link rel="stylesheet" href="auth.css">
 </head>
@@ -37,8 +37,8 @@
          Back to site
        </a>
        <div class="intro" id="intro">
-        <span class="eyebrow-pill" id="planPill">Growth plan · <span class="price">$499/mo</span></span>
-        <h1>Compliant in <span class="accent">14 days,</span> higher rankings from here on in.</h1>
+        <span class="eyebrow-pill" id="planPill">Growth plan · <span class="price">$249/mo</span></span>
+        <h1>Raise your score in <span class="accent">~2 weeks,</span> higher rankings from here on in.</h1>
         <p>No card required, cancel anytime. We'll scan your store and send your accessibility &amp; SEO score before you pay a cent.</p>
        </div>
        <div class="trust-row" id="trustRow">
@@ -72,14 +72,14 @@
 
             <div class="field">
               <label for="store">Store URL</label>
-              <input type="url" id="store" name="store" placeholder="https://yourstore.com" required>
+              <input type="url" id="store" name="store" autocomplete="url" placeholder="https://yourstore.com" required>
             </div>
 
             <div class="field">
               <label for="plan">Plan</label>
               <select id="plan" name="plan">
-                <option value="starter">Starter — $199/mo</option>
-                <option value="growth" selected>Growth — $499/mo (Most popular)</option>
+                <option value="starter">Starter — $79/mo</option>
+                <option value="growth" selected>Growth — $249/mo (Most popular)</option>
                 <option value="enterprise">Enterprise — Custom</option>
               </select>
             </div>
@@ -117,9 +117,9 @@
           Accessrank
         </div>
         <div class="footer-cols">
-          <div class="footer-col"><h3>PRODUCT</h3><a href="index.html#product">Platform</a><a href="#">Integrations</a><a href="#">Changelog</a></div>
-          <div class="footer-col"><h3>COMPANY</h3><a href="#">About</a><a href="#">Customers</a><a href="#">Careers</a></div>
+          <div class="footer-col"><h3>COMPANY</h3><a href="index.html">About</a><a href="#">Customers</a><a href="careers.html">Careers</a></div>
           <div class="footer-col"><h3>RESOURCES</h3><a href="index.html#wcag">WCAG 2.2 explained</a><a href="#">EAA &amp; ADA guide</a><a href="#">Blog</a></div>
+          <div class="footer-col"><h3>LEGAL</h3><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="disclosure.html">Disclosure</a></div>
         </div>
       </div>
       <div class="footer-disclaimer">Accessrank is not a law firm and does not provide legal representation or advice, and does not guarantee any specific legal outcome or search-ranking result. Accessibility remediation reduces risk but cannot guarantee against claims. &lsquo;Score&rsquo; refers to automated and manual accessibility testing results against WCAG 2.2 AA. Nothing here is tax advice.</div>
@@ -132,8 +132,8 @@
     var params = new URLSearchParams(location.search);
     var plan = params.get('plan');
     var planData = {
-      starter: { label: 'Starter plan', price: '$199/mo' },
-      growth: { label: 'Growth plan', price: '$499/mo' },
+      starter: { label: 'Starter plan', price: '$79/mo' },
+      growth: { label: 'Growth plan', price: '$249/mo' },
       enterprise: { label: 'Enterprise plan', price: 'Custom' }
     };
     function setPill(p) {

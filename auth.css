@@ -54,10 +54,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: transp
   background: radial-gradient(120% 80% at 50% 0%, transparent 40%, rgba(10,14,32,0.55) 100%); }
 
 /* ---- Layout: single centered column ---- */
-.page { min-height: 100vh; display: flex; flex-direction: column; }
+.page { min-height: 100vh; display: flex; flex-direction: column; --edge: max(64px, calc((100% - 1280px) / 2 + 64px)); }
 .topbar {
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
-  padding: 24px clamp(20px, 4vw, 56px) 18px;
+  padding: 24px var(--edge) 18px;
 }
 .topnav { display: flex; align-items: center; gap: 26px; }
 .topnav a { font-size: 14px; font-weight: 500; color: var(--text-soft); transition: color .15s ease; }
@@ -68,7 +68,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: transp
 .auth-main {
   flex: 1;
   display: flex; align-items: center; justify-content: center;
-  padding: clamp(24px, 4vw, 48px) clamp(20px, 4vw, 56px) 48px;
+  padding: clamp(24px, 4vw, 48px) var(--edge) 48px;
 }
 .auth-grid {
   display: grid; grid-template-columns: minmax(0, 460px) minmax(420px, 480px);
@@ -189,7 +189,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
   .form-card, .form-card.wide { max-width: 560px; }
 }
 /* ---- Legal / content pages ---- */
-.doc-main { flex: 1; padding: clamp(28px, 5vw, 64px) clamp(20px, 4vw, 56px) 56px; }
+.doc-main { flex: 1; padding: clamp(28px, 5vw, 64px) var(--edge) 56px; }
 .doc { width: 100%; max-width: 760px; margin: 0 auto; }
 .doc .back-link { margin-bottom: 22px; }
 .doc-head { padding-bottom: 26px; margin-bottom: 34px; border-bottom: 1px solid var(--hairline-strong); }
@@ -230,7 +230,8 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 @media (max-width: 640px) { .doc-toc ul, .perks { grid-template-columns: 1fr; } .job { flex-direction: row; } }
 
 /* ---- Footer (matches main site) ---- */
-.site-footer { position: relative; padding: 32px clamp(20px, 4vw, 56px) 24px; border-top: 1px solid var(--hairline-strong); margin-top: 8px; }
+.site-footer { position: relative; padding: 32px var(--edge) 24px; margin-top: 8px; }
+.site-footer::before { content: ''; position: absolute; top: 0; left: var(--edge); right: var(--edge); height: 1px; background: var(--hairline-strong); }
 .site-footer .footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; gap: 24px; flex-wrap: wrap; }
 .site-footer .footer-cols { display: flex; gap: 40px; font-size: 12px; }
 .site-footer .footer-col h3 { font-size: 11px; letter-spacing: 2px; color: var(--text-faint); font-weight: 500; margin: 0 0 10px; }
@@ -241,6 +242,9 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .site-footer .footer-legal { display: flex; gap: 22px; }
 .site-footer .footer-legal a { color: var(--text-faint); }
 .site-footer .footer-legal a:hover { color: var(--text-soft); }
+@media (max-width: 1000px) {
+  .page { --edge: 40px; }
+}
 @media (max-width: 640px) {
   .site-footer .footer-top { flex-direction: column; gap: 24px; }
   .site-footer .footer-cols { flex-wrap: wrap; gap: 22px 40px; }
@@ -251,5 +255,5 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 @media (max-width: 560px) {
   .field-row { grid-template-columns: 1fr; }
   .form-card { padding: 26px 20px; border-radius: 14px; }
-  .topbar { padding: 20px; }
+  .page { --edge: 20px; }
 }
