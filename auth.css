@@ -4,6 +4,7 @@
 :root {
   --brand: #FFD23F;
   --brand-rgb: 255, 210, 63;
+  --keyline: rgba(255, 210, 63, 0.32);
   --brand-ink: #0E0E10;
   --brand-soft: rgba(255, 210, 63, 0.12);
   --brand-border: rgba(255, 210, 63, 0.30);
@@ -106,7 +107,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: transp
   width: 100%; max-width: 100%; text-align: left;
   background: color-mix(in oklab, var(--surface) 82%, transparent);
   backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border: 1px solid var(--hairline-strong);
+  border: 1px solid var(--keyline);
   border-radius: 18px;
   padding: 34px 34px 30px;
   box-shadow: 0 40px 90px -40px rgba(0,0,0,0.75);
@@ -148,7 +149,7 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .legal-note {
   display: flex; gap: 10px; align-items: flex-start;
   font-size: 12px; line-height: 1.5; color: var(--text-faint);
-  background: var(--surface-2); border: 1px solid var(--hairline);
+  background: var(--surface-2); border: 1px solid var(--keyline);
   border-radius: 10px; padding: 12px 14px; margin-top: 4px;
 }
 .legal-note .tick { flex: 0 0 auto; color: var(--brand); }
@@ -206,10 +207,10 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 .doc ul { margin: 0 0 14px; padding-left: 20px; }
 .doc li { font-size: 14.5px; line-height: 1.6; color: var(--text-muted); margin-bottom: 7px; }
 .doc strong { color: var(--text-soft); font-weight: 600; }
-.doc .callout { background: var(--surface-2); border: 1px solid var(--hairline); border-left: 3px solid var(--brand); border-radius: 10px; padding: 16px 18px; margin: 0 0 26px; }
+.doc .callout { background: var(--surface-2); border: 1px solid var(--keyline); border-left: 3px solid var(--brand); border-radius: 10px; padding: 16px 18px; margin: 0 0 26px; }
 .doc .callout p { margin: 0; color: var(--text-soft); font-size: 14px; }
-.doc-toc { background: var(--surface); border: 1px solid var(--hairline-strong); border-radius: 12px; padding: 18px 20px; margin: 0 0 34px; }
-.doc-toc h4 { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-faint); font-weight: 600; margin: 0 0 12px; }
+.doc-toc { background: var(--surface); border: 1px solid var(--keyline); border-radius: 12px; padding: 18px 20px; margin: 0 0 34px; }
+.doc-toc .doc-toc-label { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--text-faint); font-weight: 600; margin: 0 0 12px; }
 .doc-toc ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px 20px; }
 .doc-toc li { margin: 0; }
 .doc-toc a { font-size: 13.5px; color: var(--text-soft); }
@@ -217,37 +218,35 @@ select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmln
 
 /* ---- Careers ---- */
 .job-list { display: flex; flex-direction: column; gap: 12px; margin: 0 0 30px; }
-.job { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: var(--surface); border: 1px solid var(--hairline-strong); border-radius: 12px; padding: 20px 22px; transition: border-color .18s ease, transform .18s ease; }
+.job { display: flex; align-items: center; justify-content: space-between; gap: 20px; background: var(--surface); border: 1px solid var(--keyline); border-radius: 12px; padding: 20px 22px; transition: border-color .18s ease, transform .18s ease; }
 .job:hover { border-color: var(--brand-border); transform: translateY(-2px); color: inherit; }
 .job .job-role { font-size: 16px; font-weight: 600; color: var(--text); margin: 0 0 5px; }
 .job .job-meta { font-size: 13px; color: var(--text-faint); }
 .job .job-meta span + span::before { content: '·'; margin: 0 8px; color: var(--hairline-strong); }
 .job .job-arrow { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--brand-border); background: var(--brand-soft); color: var(--brand); display: flex; align-items: center; justify-content: center; }
 .perks { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 0 0 30px; }
-.perk { background: var(--surface-2); border: 1px solid var(--hairline); border-radius: 10px; padding: 16px 18px; }
+.perk { background: var(--surface-2); border: 1px solid var(--keyline); border-radius: 10px; padding: 16px 18px; }
 .perk h3 { font-size: 14px; font-weight: 600; color: var(--text); margin: 0 0 5px; }
 .perk p { font-size: 13px; line-height: 1.5; color: var(--text-muted); margin: 0; }
 @media (max-width: 640px) { .doc-toc ul, .perks { grid-template-columns: 1fr; } .job { flex-direction: row; } }
 
 /* ---- Footer (matches main site) ---- */
-.site-footer { position: relative; padding: 32px var(--edge) 24px; margin-top: 8px; }
-.site-footer::before { content: ''; position: absolute; top: 0; left: var(--edge); right: var(--edge); height: 1px; background: var(--hairline-strong); }
-.site-footer .footer-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; gap: 24px; flex-wrap: wrap; }
-.site-footer .footer-cols { display: flex; gap: 40px; font-size: 12px; }
-.site-footer .footer-col h3 { font-size: 11px; letter-spacing: 2px; color: var(--text-faint); font-weight: 500; margin: 0 0 10px; }
-.site-footer .footer-col a { display: block; color: var(--text-soft); padding: 8px 0; min-height: 24px; }
-.site-footer .footer-col a:hover { color: var(--text); }
-.site-footer .footer-disclaimer { font-size: 11px; line-height: 1.6; color: var(--text-fainter); margin: 0 0 16px; padding-top: 16px; border-top: 1px solid var(--hairline-strong); text-wrap: pretty; }
-.site-footer .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; font-size: 11px; color: var(--text-faint); gap: 18px; flex-wrap: wrap; }
-.site-footer .footer-legal { display: flex; gap: 22px; }
-.site-footer .footer-legal a { color: var(--text-faint); }
-.site-footer .footer-legal a:hover { color: var(--text-soft); }
+.site-footer { position: relative; padding: 32px var(--edge) 28px; background: #0A1130; margin-top: 8px; }
+.site-footer .footer-top { display: grid; grid-template-columns: minmax(0, 2fr) auto; gap: 48px 56px; align-items: start; margin-bottom: 4px; }
+.site-footer .footer-brand { max-width: 520px; }
+.site-footer .footer-brand .logo { font-size: 22px; margin-bottom: 14px; }
+.site-footer .footer-tagline { font-size: 14px; line-height: 1.6; color: var(--text-muted); margin: 0 0 18px; text-wrap: pretty; }
+.site-footer .footer-cols { display: flex; gap: 44px; }
+.site-footer .footer-col a { display: block; color: var(--text-soft); font-size: 14px; padding: 7px 0; min-height: 24px; transition: color 0.15s ease; }
+.site-footer .footer-col a:hover { color: var(--brand); }
+.site-footer .footer-disclaimer { font-size: 11.5px; line-height: 1.65; color: #A0A4B0; margin: 0; padding: 0; text-wrap: pretty; }
+.site-footer .footer-bottom { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; font-size: 12px; color: var(--text-faint); gap: 18px; flex-wrap: wrap; }
 @media (max-width: 1000px) {
   .page { --edge: 40px; }
 }
-@media (max-width: 640px) {
-  .site-footer .footer-top { flex-direction: column; gap: 24px; }
-  .site-footer .footer-cols { flex-wrap: wrap; gap: 22px 40px; }
+@media (max-width: 720px) {
+  .site-footer .footer-top { grid-template-columns: 1fr; gap: 34px; }
+  .site-footer .footer-cols { flex-wrap: wrap; gap: 22px 48px; }
 }
 @media (max-width: 720px) {
   .topnav a:not(.free-audit), .topnav .divider { display: none; }
