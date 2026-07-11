@@ -64,6 +64,12 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 @keyframes auroraDrift7 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(44%,-44%) scale(1.16); } 50% { transform: translate(-34%,50%) scale(0.85); } 75% { transform: translate(-50%,-28%) scale(1.26); } }
 @keyframes auroraDrift8 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(-38%,-34%) scale(1.12); } 50% { transform: translate(50%,-50%) scale(0.9); } 75% { transform: translate(34%,44%) scale(1.22); } }
 @media (prefers-reduced-motion: reduce) { .site .aurora span { animation: none !important; } }
+/* Mobile: the blurred blob field is the dominant paint cost on throttled CPUs.
+   Hold it static (no infinite animation), thin it to 4 blobs, and drop the blur radius. */
+@media (max-width: 1000px) {
+  .site .aurora span { animation: none !important; will-change: auto; filter: blur(52px) saturate(1.1); }
+  .site .aurora .b5, .site .aurora .b6, .site .aurora .b7, .site .aurora .b8 { display: none; }
+}
 .site * { box-sizing: border-box; }
 .site button { font-family: inherit; cursor: pointer; border: none; background: transparent; }
 .site a { text-decoration: none; }
