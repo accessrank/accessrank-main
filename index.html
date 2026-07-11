@@ -75,9 +75,10 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 
 .site .logo-mark { width: 24px; height: 24px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; position: relative; overflow: hidden; background: var(--brand); color: var(--brand-ink); }
 .site .logo-mark::before, .site .logo-mark::after { content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 1; transform: translate(-110%, -110%); }
-.site .logo-mark::before { background: #E0432B; animation: logoWipe1 5s ease-in-out 1 forwards; }
-.site .logo-mark::after { background: #4ADE80; animation: logoWipe2 5s ease-in-out 1 forwards; }
-.site .logo-mark .swipe { position: absolute; top: -50%; left: -150%; width: 200%; height: 200%; pointer-events: none; z-index: 4; background: linear-gradient(135deg, transparent 45%, rgba(255,255,255,0.85) 50%, transparent 55%); filter: blur(0.5px); animation: logoSwipe 5s ease-in-out 1 forwards; }
+.site .logo-mark.anim::before { background: #E0432B; animation: logoWipe1 5s ease-in-out 1 forwards; }
+.site .logo-mark.anim::after { background: #4ADE80; animation: logoWipe2 5s ease-in-out 1 forwards; }
+.site .logo-mark .swipe { position: absolute; top: -50%; left: -150%; width: 200%; height: 200%; pointer-events: none; z-index: 4; background: linear-gradient(135deg, transparent 45%, rgba(255,255,255,0.85) 50%, transparent 55%); filter: blur(0.5px); opacity: 0; }
+.site .logo-mark.anim .swipe { animation: logoSwipe 5s ease-in-out 1 forwards; }
 .site .logo-mark > svg { position: relative; z-index: 2; }
 
 @keyframes logoWipe1 { 0%, 13% { transform: translate(-110%, -110%); } 22%, 55% { transform: translate(0, 0); } 64%, 100% { transform: translate(110%, 110%); } }
@@ -110,7 +111,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .sub { font-size: 16px; line-height: 1.55; color: var(--text-soft); max-width: 420px; margin: 0 0 22px; text-wrap: pretty; }
 .site .sub .highlight { color: var(--text); font-weight: 500; }
 .site .wcag-link { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--brand-soft); color: var(--brand); border: 1px solid var(--brand-border); border-radius: 100px; font-size: 12px; font-weight: 500; margin-bottom: 24px; }
-.site .wcag-wrap { text-align: center; margin: -18px auto 34px; }
+.site .wcag-wrap { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px; margin: -18px auto 34px; }
 .site .wcag-wrap .wcag-link { margin-bottom: 0; }
 .site .info-circle { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid var(--brand); display: inline-flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; line-height: 1; }
 .site .cta-row { display: inline-flex; flex-direction: column; align-items: stretch; gap: 10px; max-width: 100%; }
@@ -169,9 +170,9 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .marquee-track .sep { color: #FFFFFF; opacity: 0.45; font-size: 10px; }
 @keyframes mq14 { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-.site .risk-strip { padding: 25px var(--edge) 2px; --warning: #3B82F6; --warning-soft: #60A5FA; }
-.site .risk-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--warning); font-weight: 500; margin-bottom: 12px; text-align: center; }
-.site .risk-title { font-size: 40px; line-height: 1.12; letter-spacing: -1.6px; font-weight: 800; margin: 0 auto 12px; color: var(--text); text-align: center; max-width: 1080px; }
+.site .risk-strip { padding: 37px var(--edge) 2px; --warning: #3B82F6; --warning-soft: #60A5FA; }
+.site .risk-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--warning); font-weight: 500; margin-bottom: 16px; text-align: center; }
+.site .risk-title { font-size: 42px; line-height: 1.2; letter-spacing: -1.6px; font-weight: 800; margin: 0 auto 12px; color: var(--text); text-align: center; max-width: 1080px; }
 .site .risk-sub { font-size: 20px; line-height: 1.45; color: var(--text-soft); text-align: center; max-width: 860px; margin: 0 auto 36px; }
 .site .risk-title .red { color: var(--warning); }
 .site .risk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 1040px; margin: 0 auto; }
@@ -183,7 +184,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .risk-source { font-size: 10px; color: var(--brand); letter-spacing: 1px; text-transform: uppercase; }
 
 .site .wcag-section { padding: 50px var(--edge) 64px; }
-.site .section-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--brand); font-weight: 500; margin-bottom: 12px; text-align: center; }
+.site .section-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--brand); font-weight: 500; margin-bottom: 16px; text-align: center; }
 .site h2 { font-size: 36px; line-height: 1.1; letter-spacing: -1px; font-weight: 800; margin: 0 0 14px; color: var(--text); text-align: center; }
 .site .section-sub { font-size: 20px; color: var(--text-soft); text-align: center; max-width: 760px; margin: 0 auto 36px; line-height: 1.45; text-wrap: pretty; }
 .site .wcag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
@@ -206,13 +207,15 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .criteria-body .desc { display: block; font-size: 11px; color: var(--text-faint); margin-top: 2px; font-weight: 400; }
 .site .criteria-freq { font-size: 12px; color: var(--warning); font-weight: 600; text-align: right; }
 .site .criteria-freq .small { font-size: 9px; color: var(--text-fainter); display: block; letter-spacing: 1px; text-transform: uppercase; font-weight: 500; }
-.site .criteria-note { font-size: 11px; line-height: 1.5; color: var(--text-fainter); font-style: italic; margin: 14px 0 0; text-align: center; text-wrap: pretty; }
+.site .criteria-note { font-size: 11px; line-height: 1.5; color: var(--text-muted); font-style: italic; margin: 14px 0 0; text-align: center; text-wrap: balance; }
 
 .site .overlay-warning { padding: 40px var(--edge); background: repeating-linear-gradient(135deg, var(--overlay-stripe-a) 0 24px, var(--overlay-stripe-b) 24px 48px); border-top: 2px solid var(--brand); border-bottom: 2px solid var(--brand); }
 .site .overlay-card { max-width: 720px; margin: 0 auto; display: flex; gap: 18px; align-items: flex-start; }
-.site .overlay-icon { width: 64px; height: 64px; background: #DC2626; color: #FFFFFF; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 8px 22px -8px rgba(220, 38, 38, 0.7); }
-.site .overlay-icon svg { width: 34px; height: 34px; }
-.site .overlay-content h3 { font-size: 22px; font-weight: 700; color: var(--brand); margin: 0 0 6px; }
+.site .overlay-icon { width: 58px; height: 58px; background: #DC2626; color: #FFFFFF; border-radius: 13px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.site .overlay-icon svg { width: 36px; height: 36px; stroke-width: 1.5; animation: overlayWarnBlink 1.8s ease-in-out infinite; }
+@keyframes overlayWarnBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .site .overlay-icon svg { animation: none !important; opacity: 1; } }
+.site .overlay-content h3 { font-size: 22px; font-weight: 700; color: #FFFFFF; margin: 0 0 6px; }
 .site .overlay-content p { font-size: 15px; color: var(--overlay-body); line-height: 1.55; margin: 0; }
 .site .overlay-content p strong { color: var(--text); font-weight: 700; background: rgba(var(--brand-rgb), 0.15); padding: 1px 5px; border-radius: 3px; }
 
@@ -231,7 +234,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .stat-label { font-size: 12px; color: rgba(235, 242, 255, 0.78); line-height: 1.4; }
 .site .stat-src { font-size: 10.5px; color: rgba(235, 242, 255, 0.5); font-style: italic; }
 
-.site .testimonial { padding: 32px var(--edge) 56px; }
+.site .testimonial { padding: 9px var(--edge) 56px; }
 .site .accent-yellow { color: var(--brand); }
 .site .quote-card { background: var(--surface); border-radius: 14px; padding: 32px; border: 1px solid var(--keyline); max-width: 540px; margin: 25px auto 0; }
 .site .quote-text { font-size: 19px; line-height: 1.45; color: var(--text); font-weight: 500; letter-spacing: -0.3px; margin: 0 0 18px; }
@@ -296,7 +299,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .lawsuit-head { max-width: 810px; }
 .site .lawsuit-eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 3px; color: #FFFFFF; font-weight: 700; background: #DC2626; border: 1px solid #DC2626; padding: 7px 14px; border-radius: 100px; margin-bottom: 16px; box-shadow: 0 6px 16px -8px rgba(220,38,38,0.7); }
 .site .lawsuit-eyebrow .pulse-dot { background: #FFFFFF; }
-.site .lawsuit-title { font-size: 30px; line-height: 1.1; letter-spacing: -1.2px; font-weight: 800; color: var(--text); margin: 0 0 12px; text-align: left; }
+.site .lawsuit-title { font-size: 30px; line-height: 1.1; letter-spacing: -1.2px; font-weight: 800; color: var(--text); margin: 12px 0 12px; text-align: left; }
 .site .lawsuit-sub { font-size: 15px; line-height: 1.55; color: var(--text-soft); margin: 0; text-wrap: pretty; }
 .site .lawsuit-pricebox { background: var(--bg); border: 1px solid rgba(255,210,63,0.45); border-radius: 12px; padding: 20px 22px; min-width: 0; }
 .site .lawsuit-price-amt { font-size: 27px; font-weight: 800; color: var(--text); letter-spacing: -1px; line-height: 1; }
@@ -312,13 +315,11 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .lawsuit-cta { display: inline-flex; align-items: center; gap: 8px; background: #DC2626; color: #FFFFFF; padding: 13px 24px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: background 0.15s ease, transform 0.15s ease; }
 .site .lawsuit-cta:hover { background: #B91C1C; transform: translateY(-1px); }
 .site .lawsuit-disclaimer { font-size: 12.5px; color: var(--text-faint); line-height: 1.5; font-style: italic; white-space: nowrap; }
-.site .hero-served { display: inline-flex; align-items: center; justify-content: center; gap: 7px; margin-top: 6px; padding: 13px 22px; border-radius: 8px; border: none; background: #DC2626; font-size: 13px; color: #FFFFFF; font-weight: 600; transition: background 0.15s ease; }
-.site .hero-served:hover { background: #B91C1C; }
 @media (max-width: 900px) { .site .lawsuit-top { grid-template-columns: 1fr; } .site .lawsuit-pricebox { justify-self: start; } .site .lawsuit-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .site .lawsuit-grid { grid-template-columns: 1fr; } .site .lawsuit-title { font-size: 25px; } }
 
 .site .credit { padding: 56px var(--edge) 43px; }
-.site .credit-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--brand); font-weight: 500; margin-bottom: 12px; text-align: center; }
+.site .credit-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--brand); font-weight: 500; margin-bottom: 16px; text-align: center; }
 .site .credit h2 { margin-bottom: 14px; }
 .site .credit h2 .accent { color: var(--brand); }
 .site .credit-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: center; max-width: 940px; margin: 28px auto 0; }
@@ -390,21 +391,17 @@ html, body { margin: 0; padding: 0; background: #14142A; }
   .site .price-toggle { width: 100%; }
 }
 
-.site .footer { position: relative; padding: 32px var(--edge) 28px; background: #0A1130; }
+.site .footer { position: relative; padding: 32px var(--edge) 32px; background: #0A1130; }
 .site .footer-top { display: grid; grid-template-columns: minmax(0, 2fr) auto; gap: 48px 56px; align-items: start; margin-bottom: 4px; }
 .site .footer-brand { max-width: 520px; }
 .site .footer-brand .logo { font-size: 22px; margin-bottom: 14px; }
-.site .footer-tagline { font-size: 14px; line-height: 1.6; color: var(--text-muted); margin: 0 0 18px; text-wrap: pretty; }
-.site .footer-cta { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; color: var(--brand); }
-.site .footer-cta:hover { color: var(--brand); opacity: 0.82; }
+.site .footer-tagline { font-size: 17px; line-height: 1.55; color: var(--text-muted); margin: 0 0 8px; text-wrap: balance; }
 .site .footer-cols { display: flex; gap: 44px; }
 .site .footer-col a { display: block; color: var(--text-soft); font-size: 14px; padding: 7px 0; min-height: 24px; transition: color 0.15s ease; }
 .site .footer-col a:hover { color: var(--brand); }
-.site .footer-disclaimer { font-size: 11.5px; line-height: 1.65; color: #A0A4B0; margin: 0; padding: 0; max-width: none; text-wrap: pretty; }
-.site .footer-bottom { display: flex; justify-content: space-between; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 12px; font-size: 12px; color: var(--text-faint); }
-.site .footer-legal { display: flex; gap: 26px; }
-.site .footer-legal a { color: var(--text-faint); transition: color 0.15s ease; }
-.site .footer-legal a:hover { color: var(--brand); }
+.site .footer-disclaimer { font-size: 11.5px; line-height: 1.65; color: #8A8E9A; margin: 0; padding: 0; max-width: 960px; text-wrap: balance; }
+.site .footer-legalrow { display: flex; justify-content: space-between; align-items: flex-end; gap: 48px; flex-wrap: wrap; }
+.site .footer-bottom { display: flex; justify-content: flex-end; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 0; font-size: 12px; color: var(--text-faint); white-space: nowrap; }
 @media (max-width: 720px) { .site .footer-top { grid-template-columns: 1fr; gap: 34px; } .site .footer-cols { gap: 48px; } }
 </style>
 
@@ -432,7 +429,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
   <section class="risk-strip">
     <h1 class="risk-title">If your ecommerce site has low ADA scores,<br/> <span class="red">a lawsuit might be right around the corner.</span></h1>
     <p class="risk-sub">We open your store to the 1 in 4 Americans with disabilities, help raise your SEO<br/>and AI rankings, and keep predatory lawyers looking elsewhere.</p>
-    <div class="wcag-wrap"><a href="#wcag" class="wcag-link"><span class="info-circle">i</span><span>WCAG 2.2 explained</span><span style="opacity: 0.6;">&rarr;</span></a></div>
+    <div class="wcag-wrap"><a href="#lawsuit-response" class="wcag-link"><span>Already been served?</span><span style="opacity: 0.6;">&rarr;</span></a><a href="#wcag" class="wcag-link"><span class="info-circle">i</span><span>WCAG 2.2 explained</span><span style="opacity: 0.6;">&rarr;</span></a></div>
     <div class="risk-grid">
       <div class="risk-card"><div class="risk-num">77<span class="small">%</span></div><div class="risk-label">of ADA lawsuits target ecommerce sites. If you sell online you're a target.</div>
 <div class="risk-source">&mdash; UsableNet 2024 Year-End Report</div></div>
@@ -446,13 +443,12 @@ html, body { margin: 0; padding: 0; background: #14142A; }
     <div>
       <div class="eyebrow"><span class="pulse-dot"></span>BUILT FOR DTC ECOMMERCE</div>
       <h2 class="hero-title">Higher rank.<br/>Wider <span class="accent">reach.</span></h2>
-      <p class="sub">Rank is in our name for a reason. The same structural fixes that raise your accessibility score are the ones search engines reward &mdash; so <span class="highlight">better access and better ranking tend to move together</span>.</p>
+      <p class="sub">Rank is in our name for a reason. The same structural fixes that raise your accessibility score are the ones that boost both <span class="highlight">SEO and AI search rankings</span>.</p>
       <div class="cta-row">
         <div class="cta-top">
           <button class="btn-primary">Get my score</button>
           <button class="btn-secondary" style="border-color: rgb(255, 255, 255)">See live demo</button>
         </div>
-        <a href="#lawsuit-response" class="hero-served">Already been served? &rarr;</a>
       </div>
     </div>
     <div class="audit-card" id="audit-card" role="region" aria-label="Live accessibility audit demo">
@@ -512,7 +508,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 
   <div class="overlay-warning">
     <div class="overlay-card">
-      <div class="overlay-icon" role="img" aria-label="Warning"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><line x1="9.2" y1="9.2" x2="14.8" y2="14.8"/><line x1="14.8" y1="9.2" x2="9.2" y2="14.8"/></svg></div>
+      <div class="overlay-icon" role="img" aria-label="Warning"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><g class="warn-mark"><line x1="12" y1="9" x2="12" y2="13.5"/><line x1="12" y1="17" x2="12.01" y2="17"/></g></svg></div>
       <div class="overlay-content">
         <h3>A warning about overlay widgets.</h3>
         <p>If you've installed an "accessibility plugin" that promises instant accessibility &mdash; it doesn't work. <strong>25% of accessibility lawsuits in 2024 involved sites running overlay widgets</strong>, and the FTC fined accessiBe $1 million for misleading claims in 2025. Overlays don't fix the underlying code; they're a litigation signal. Accessrank fixes the source.</p>
@@ -692,7 +688,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
           </span>
           Accessrank
         </div>
-        <p class="footer-tagline">Source-code accessibility remediation and monitoring<br/>that raises your WCAG score &mdash; and your search rank with it.</p>
+        <p class="footer-tagline">Source-code remediation and monitoring that raises<br/>your accessibility scores and search visibility.</p>
       </div>
       <div class="footer-cols">
         <div class="footer-col"><a href="#">About</a><a href="#">Customers</a><a href="careers.html">Careers</a></div>
@@ -700,8 +696,10 @@ html, body { margin: 0; padding: 0; background: #14142A; }
         <div class="footer-col"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclosure.html">Disclosure</a></div>
       </div>
     </div>
-    <div class="footer-disclaimer">Accessrank is not a law firm and does not provide legal representation or advice, and does not guarantee any specific legal outcome or search-ranking result. Accessibility remediation reduces risk but cannot guarantee against claims. &lsquo;Score&rsquo; refers to automated and manual accessibility testing results against WCAG 2.2 AA. Nothing here is tax advice.</div>
+    <div class="footer-legalrow">
+      <div class="footer-disclaimer">Accessrank is not a law firm and does not provide legal representation or advice, and does not guarantee any specific legal outcome or search-ranking result. Accessibility remediation reduces risk but cannot guarantee against claims. &lsquo;Score&rsquo; refers to automated and manual accessibility testing results against WCAG 2.2 AA. Nothing here is tax advice.</div>
     <div class="footer-bottom"><span>&copy;2026 Accessrank</span></div>
+    </div>
   </footer>
 </div>
 
@@ -810,6 +808,23 @@ html, body { margin: 0; padding: 0; background: #14142A; }
     card.addEventListener('click', select);
     card.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); select(); } });
   });
+})();
+</script>
+
+<script>
+(function() {
+  function replay(el) { el.classList.remove('anim'); void el.offsetWidth; el.classList.add('anim'); }
+  // nav logo plays once on load
+  var navLogo = document.querySelector('.site .nav .logo-mark');
+  if (navLogo) replay(navLogo);
+  // footer logo replays each time it scrolls into view
+  var footLogo = document.querySelector('.site .footer .logo-mark');
+  if (footLogo && 'IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) { if (e.isIntersecting) replay(footLogo); });
+    }, { threshold: 0.6 });
+    io.observe(footLogo);
+  } else if (footLogo) { replay(footLogo); }
 })();
 </script>
 </body>

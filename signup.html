@@ -117,7 +117,7 @@
             </span>
             Accessrank
           </div>
-          <p class="footer-tagline">Source-code accessibility remediation and monitoring<br/>that raises your WCAG score &mdash; and your search rank with it.</p>
+          <p class="footer-tagline">Source-code remediation and monitoring that raises<br/>your accessibility scores and search visibility.</p>
         </div>
         <div class="footer-cols">
           <div class="footer-col"><a href="index.html">About</a><a href="#">Customers</a><a href="careers.html">Careers</a></div>
@@ -125,8 +125,10 @@
           <div class="footer-col"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="disclosure.html">Disclosure</a></div>
         </div>
       </div>
+      <div class="footer-legalrow">
       <div class="footer-disclaimer">Accessrank is not a law firm and does not provide legal representation or advice, and does not guarantee any specific legal outcome or search-ranking result. Accessibility remediation reduces risk but cannot guarantee against claims. &lsquo;Score&rsquo; refers to automated and manual accessibility testing results against WCAG 2.2 AA. Nothing here is tax advice.</div>
       <div class="footer-bottom"><span>&copy;2026 Accessrank</span></div>
+    </div>
     </footer>
   </div>
 
@@ -145,9 +147,13 @@
     if (plan && planData[plan]) { setPill(plan); document.getElementById('plan').value = plan; }
     document.getElementById('plan').addEventListener('change', function() { setPill(this.value); });
 
-    document.getElementById('signupForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      if (!this.checkValidity()) { this.reportValidity(); return; }
+    var WEB3_KEY = '4f41e8f5-fdf6-4972-8b62-d22df4f0c5d7';
+    var form = document.getElementById('signupForm');
+    var submitBtn = form.querySelector('.submit-btn') || form.querySelector('button');
+    var errEl = null, sending = false;
+    function showErr(m) { if (!errEl) { errEl = document.createElement('p'); errEl.className = 'form-error'; errEl.setAttribute('role', 'alert'); errEl.style.cssText = 'color:#ff7a5c;font-size:13px;line-height:1.5;margin:12px 0 0'; form.appendChild(errEl); } errEl.textContent = m; }
+    function clearErr() { if (errEl) { errEl.remove(); errEl = null; } }
+    function reveal() {
       var name = document.getElementById('firstName').value.trim();
       document.getElementById('successMsg').textContent =
         (name ? name + ', check' : 'Check') + ' your inbox — we\u2019ve sent a confirmation link and kicked off your first accessibility scan.';
@@ -158,6 +164,35 @@
       document.getElementById('formLive').classList.add('hide');
       document.getElementById('success').classList.add('show');
       window.scrollTo({ top: 0 });
+    }
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      if (sending) return;
+      if (!form.checkValidity()) { form.reportValidity(); return; }
+      clearErr();
+      var payload = {
+        access_key: WEB3_KEY,
+        subject: 'New Accessrank free-trial signup',
+        from_name: 'Accessrank Website',
+        replyto: document.getElementById('email').value.trim(),
+        page: document.title,
+        first_name: document.getElementById('firstName').value.trim(),
+        last_name: document.getElementById('lastName').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        store_url: document.getElementById('store').value.trim(),
+        plan: document.getElementById('plan').value
+      };
+      sending = true;
+      var orig = submitBtn.textContent;
+      submitBtn.textContent = 'Creating your account\u2026';
+      submitBtn.style.opacity = '.6'; submitBtn.style.pointerEvents = 'none';
+      fetch('https://api.web3forms.com/submit', { method: 'POST', headers: { 'Content-Type': 'application/json', Accept: 'application/json' }, body: JSON.stringify(payload) })
+        .then(function(r) { return r.json(); })
+        .then(function(res) {
+          if (res && res.success) { reveal(); }
+          else { sending = false; submitBtn.textContent = orig; submitBtn.style.opacity = ''; submitBtn.style.pointerEvents = ''; showErr((res && res.message) || 'Something went wrong. Please email info@accessrank.ai.'); }
+        })
+        .catch(function() { sending = false; submitBtn.textContent = orig; submitBtn.style.opacity = ''; submitBtn.style.pointerEvents = ''; showErr('Network error. Please email info@accessrank.ai directly.'); });
     });
   })();
   </script>
