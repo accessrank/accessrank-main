@@ -229,7 +229,6 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .features { padding: 56px var(--edge); }
 .site .feature-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .site .feature-card { background: var(--surface); border-radius: 12px; padding: 22px; border: 1px solid var(--keyline); }
-.site .feature-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--brand-soft); border: 1px solid var(--brand-border); display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
 .site .feature-kicker { display: block; font-size: 21px; letter-spacing: -0.2px; font-weight: 700; color: var(--text); margin: 0 0 14px; }
 .site .feature-desc strong { color: var(--text); font-weight: 700; }
 .site .feature-desc { font-size: 13px; color: var(--text-muted); line-height: 1.5; margin: 0; }
@@ -252,7 +251,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .quote-name { font-size: 13px; color: var(--text); font-weight: 500; }
 .site .quote-role { font-size: 12px; color: var(--text-faint); margin-top: 4px; }
 
-.site .pricing { padding: 52px var(--edge) 28px; }
+.site .pricing { padding: 34px var(--edge) 28px; }
 .site .pricing .section-sub { margin-bottom: 26px; max-width: 900px; }
 .site .pricing-note { text-align: center; font-size: 12px; color: var(--text-faint); font-style: italic; margin: 22px auto 0; max-width: 620px; }
 .site .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -282,16 +281,6 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .pricing.show-credit .price-credit-line { opacity: 1; margin: 5px 0 0; }
 
 /* ---- Two-step "how it works" strip ---- */
-.site .howitworks { padding: 30px var(--edge) 0; }
-.site .how-eyebrow { font-size: 13px; letter-spacing: 3px; color: var(--brand); font-weight: 500; margin-bottom: 18px; text-align: center; }
-.site .how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 840px; margin: 0 auto; }
-.site .how-step { display: flex; gap: 14px; align-items: center; justify-content: center; text-align: center; background: var(--surface); border: 1px solid var(--keyline); border-radius: 12px; padding: 20px 22px; }
-.site .how-num { width: 30px; height: 30px; border-radius: 8px; background: var(--brand); color: var(--brand-ink); font-weight: 800; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; }
-.site .how-step h3 { margin: 0 0 6px; font-size: 15px; color: var(--text); font-weight: 600; }
-.site .how-step h3 .tag { display: block; font-size: 15px; letter-spacing: 2px; color: var(--brand); font-weight: 700; text-transform: uppercase; margin: 0 0 7px; }
-.site .how-step p { margin: 0; font-size: 12.5px; color: var(--text-muted); line-height: 1.45; text-wrap: pretty; }
-@media (max-width: 760px) { .site .how-grid { grid-template-columns: 1fr; } }
-
 /* ---- Onboarding + monthly split on price cards ---- */
 .site .price-onboard { font-size: 27px; font-weight: 800; color: var(--text); letter-spacing: -1px; line-height: 1; margin-bottom: 8px; }
 .site .price-onboard-label { font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-fainter); font-weight: 500; margin-bottom: 9px; }
@@ -326,7 +315,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 @media (max-width: 900px) { .site .lawsuit-top { grid-template-columns: 1fr; } .site .lawsuit-pricebox { justify-self: start; } .site .lawsuit-grid { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) { .site .lawsuit-grid { grid-template-columns: 1fr; } .site .lawsuit-title { font-size: 25px; } }
 
-.site .credit { padding: 56px var(--edge) 43px; }
+.site .credit { padding: 56px var(--edge) 28px; }
 .site .credit-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--brand); font-weight: 500; margin-bottom: 16px; text-align: center; }
 .site .credit h2 { margin-bottom: 14px; }
 .site .credit h2 .accent { color: var(--brand); }
@@ -403,7 +392,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
 .site .footer-top { display: grid; grid-template-columns: minmax(0, 2fr) auto; gap: 48px 56px; align-items: start; margin-bottom: 4px; }
 .site .footer-brand { max-width: 520px; }
 .site .footer-brand .logo { font-size: 22px; margin-bottom: 14px; }
-.site .footer-tagline { font-size: 17px; line-height: 1.55; color: var(--text-muted); margin: 0 0 8px; text-wrap: balance; }
+.site .footer-tagline { font-size: 17px; line-height: 1.55; color: var(--text); margin: 0 0 8px; text-wrap: balance; }
 .site .footer-cols { display: flex; gap: 44px; }
 .site .footer-col a { display: block; color: var(--text-soft); font-size: 14px; padding: 7px 0; min-height: 24px; transition: color 0.15s ease; }
 .site .footer-col a:hover { color: var(--brand); }
@@ -578,24 +567,6 @@ html, body { margin: 0; padding: 0; background: #14142A; }
     <p class="credit-disclaimer">Figures reflect IRS Form 8826 as published. The Disabled Access Credit is non-refundable and subject to eligibility rules &mdash;<br/> Accessrank is not a tax advisor, and this is not tax advice. Confirm your eligibility and treatment with a qualified professional.</p>
   </section>
 
-  <section class="howitworks">
-    <div class="how-eyebrow">RAISE YOUR SCORE, THEN HOLD IT</div>
-    <div class="how-grid">
-      <div class="how-step">
-        <div>
-          <h3><span class="tag">Raise your score</span>One-time remediation to WCAG 2.2 AA</h3>
-          <p>A one-time, fixed-scope remediation that lifts your accessibility score &mdash; most stores in 2&ndash;4 weeks.</p>
-        </div>
-      </div>
-      <div class="how-step">
-        <div>
-          <h3><span class="tag">Hold your score</span>Monthly monitoring + source-code fixes</h3>
-          <p>Ongoing monitoring + source-code fixes that catch new issues before they drag your score back down.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <section class="pricing" id="pricing">
     <div class="section-eyebrow">PRICING</div>
     <h2>Pay for results, not promises.</h2>
@@ -674,7 +645,7 @@ html, body { margin: 0; padding: 0; background: #14142A; }
     <div class="section-eyebrow">CUSTOMER STORY</div>
     <h2 style="margin-top: 16px;">"We expected lower risk. We got <span class="accent-yellow">growth too.</span>"</h2>
     <div class="quote-card">
-      <p class="quote-text">"We brought Accessrank in after a demand letter. Days &mdash; not weeks &mdash; later our accessibility score had jumped, organic traffic was climbing, and our PDP page-speed scores hit green across the board. It paid for itself before the lawyer's invoice arrived."</p>
+      <p class="quote-text">"We brought Accessrank in after a demand letter. Days &mdash; not weeks &mdash; later our accessibility score had jumped, organic traffic was climbing, and our product images started showing up in Google. It paid for itself before the lawyer's invoice arrived."</p>
       <div class="quote-attr"><div class="avatar">HL</div><div><div class="quote-name">Henry Lovejoy</div><div class="quote-role">Founder &amp; CEO &middot; FresheMeals.com</div></div></div>
     </div>
   </section>
