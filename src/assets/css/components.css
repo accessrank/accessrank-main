@@ -169,3 +169,242 @@ body.modal-open { overflow: hidden; }
 }
 .form-success h2 { font-size: 22px; margin: 0 0 10px; color: var(--text); }
 .form-success p { margin: 0 0 8px; color: var(--text-soft); line-height: 1.6; }
+
+/* ---------------------------------------------------------------------------
+ * Scan result panel.
+ *
+ * Rendered entirely by src/assets/js/audit.js. This is the product's flagship
+ * moment — the first proof that the free check is real — so it gets the most
+ * design attention on the page.
+ * ------------------------------------------------------------------------- */
+
+.audit-results:empty { display: none; }
+.audit-results {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-top: 18px;
+}
+
+/* --- headline score --- */
+
+.result-head { display: flex; align-items: center; gap: 18px; }
+
+.score-ring {
+  position: relative;
+  flex: none;
+  width: 92px; height: 92px;
+  display: grid;
+  place-content: center;
+  border-radius: 50%;
+  border: 3px solid var(--tone, var(--brand));
+  background: rgba(255, 255, 255, 0.03);
+  text-align: center;
+}
+.score-ring[data-tone="good"]    { --tone: #4ADE80; }
+.score-ring[data-tone="ok"]      { --tone: var(--brand); }
+.score-ring[data-tone="warn"]    { --tone: #FB923C; }
+.score-ring[data-tone="bad"]     { --tone: #F87171; }
+.score-ring[data-tone="neutral"] { --tone: var(--text-muted); }
+
+.score-value {
+  display: block;
+  font-size: 32px; font-weight: 800; line-height: 1;
+  letter-spacing: -1.5px;
+  color: var(--tone, var(--text));
+  font-variant-numeric: tabular-nums;
+}
+.score-outof { display: block; font-size: 11px; color: var(--text-muted); margin-top: 3px; }
+
+.result-head-text { min-width: 0; }
+.result-band {
+  margin: 0 0 2px;
+  font-size: 15px; font-weight: 700; letter-spacing: -0.2px;
+  color: var(--text);
+}
+.result-host {
+  margin: 0 0 4px;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--brand);
+  overflow-wrap: anywhere;
+}
+.result-sub { margin: 0; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+
+/* --- the two sub-scores ---
+ * The defect this replaces: none of these classes had any CSS at all, so the
+ * label and value rendered as one run-together string ("Accessibility93") with
+ * no bar, on the most important panel on the site. */
+
+.score-split { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.score-split-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: baseline;
+  gap: 4px 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+}
+.split-label { font-size: 12px; color: var(--text-muted); }
+.split-value {
+  font-size: 20px; font-weight: 700; line-height: 1;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.split-track {
+  grid-column: 1 / -1;
+  height: 5px;
+  margin-top: 8px;
+  border-radius: 100px;
+  background: rgba(255, 255, 255, 0.10);
+  overflow: hidden;
+}
+.split-fill {
+  display: block;
+  height: 100%;
+  width: var(--pct, 0%);
+  border-radius: inherit;
+  background: var(--brand);
+  transition: width 0.6s var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) { .split-fill { transition: none; } }
+
+/* --- failing success criteria --- */
+
+.result-criteria { display: flex; flex-direction: column; gap: 8px; }
+.result-criteria-label { margin: 0; font-size: 12px; color: var(--text-soft); }
+.criteria-chips { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; margin: 0; padding: 0; }
+.criteria-chip {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  padding: 4px 9px;
+  border-radius: 100px;
+  color: var(--brand);
+  background: var(--brand-soft);
+  border: 1px solid var(--brand-border);
+}
+
+/* --- issue rows --- */
+
+.audit-rows { display: flex; flex-direction: column; gap: 2px; list-style: none; margin: 0; padding: 0; }
+.audit-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 10px;
+  padding: 10px 0;
+  border-top: 1px solid var(--hairline);
+}
+.audit-row:first-child { border-top: 0; }
+
+.impact-badge {
+  flex: none;
+  font-size: 10px; font-weight: 700;
+  letter-spacing: 0.6px; text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 5px;
+  color: var(--brand-ink);
+  background: var(--text-muted);
+  white-space: nowrap;
+}
+.impact-badge[data-impact="critical"] { background: #F87171; }
+.impact-badge[data-impact="serious"]  { background: #FB923C; }
+.impact-badge[data-impact="moderate"] { background: #FCD34D; }
+.impact-badge[data-impact="minor"]    { background: #9CA3AF; }
+
+.row-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.row-label { font-size: 13px; line-height: 1.4; color: var(--text); }
+.row-meta { font-size: 11px; color: var(--text-muted); }
+
+.result-more, .result-clean {
+  margin: 0;
+  font-size: 12px; line-height: 1.5;
+  color: var(--text-muted);
+}
+.result-clean { color: var(--text-soft); }
+
+/* Entrance stagger; content is in the DOM regardless, so assistive tech is
+ * never waiting on it. */
+.will-reveal { opacity: 0; transform: translateY(6px); }
+.will-reveal.visible {
+  opacity: 1; transform: none;
+  transition: opacity 0.35s var(--ease-out), transform 0.35s var(--ease-out);
+  transition-delay: calc(var(--i, 0) * 60ms);
+}
+
+@media (max-width: 560px) {
+  .result-head { gap: 14px; }
+  .score-ring { width: 76px; height: 76px; }
+  .score-value { font-size: 26px; }
+  .score-split { grid-template-columns: 1fr; }
+}
+
+/* ---------------------------------------------------------------------------
+ * FAQ — was the one section on the homepage with no styling at all, rendering
+ * as a full-width wall of ~140-character lines.
+ * ------------------------------------------------------------------------- */
+
+.faq { padding: 8px var(--edge) 64px; }
+
+/* The markup is a plain <dl>, so each question/answer pair is turned into a
+ * card by bordering the dt/dd pair rather than by a wrapper element. */
+.faq-list {
+  max-width: 880px;
+  margin: 0 auto;
+  border: 1px solid var(--hairline);
+  border-radius: 14px;
+  background: var(--surface);
+  overflow: hidden;
+}
+.faq-list dt {
+  margin: 0;
+  padding: 22px 26px 0;
+  font-size: 16px; font-weight: 700; letter-spacing: -0.2px;
+  color: var(--text);
+}
+.faq-list dt + dd { padding-top: 8px; }
+.faq-list dd {
+  margin: 0;
+  padding: 0 26px 22px;
+  font-size: 14px; line-height: 1.7;
+  color: var(--text-soft);
+  max-width: 74ch;
+}
+/* Divider between pairs, not above the first one. */
+.faq-list dd + dt { border-top: 1px solid var(--hairline); margin-top: 0; padding-top: 22px; }
+
+@media (max-width: 640px) {
+  .faq-list dt { padding: 18px 18px 0; }
+  .faq-list dd { padding: 0 18px 18px; }
+}
+
+/* Per-field error message, shown beneath its input and wired to it with
+ * aria-describedby. Errors are never colour-only: the text itself states the
+ * problem, and the field gets a border change plus aria-invalid. */
+.field-error {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #FCA5A5;
+}
+.field-check .field-error { grid-column: 1 / -1; }
+
+/* "(required)" marker inside a label. */
+.req {
+  font-weight: 400;
+  font-size: 11.5px;
+  color: var(--text-muted);
+  letter-spacing: 0;
+}
+
+/* The plan we most want chosen should look like it, not just say so. */
+.price-card.featured, .price-card[data-featured] {
+  border-color: var(--brand-border);
+  background: linear-gradient(180deg, var(--brand-soft) 0%, rgba(255, 255, 255, 0.02) 46%);
+  box-shadow: 0 18px 44px -22px rgba(255, 210, 63, 0.45);
+}
+
+/* Keep the hero's two-line punchline intact rather than orphaning a word. */
+.hero-title, .risk-title { text-wrap: balance; }

@@ -54,23 +54,27 @@
               every finding, the elements affected, and how to fix each one.
             </p>
 
+            <!-- Every field here is required, and each label says so. A field
+                 that is quietly mandatory behind copy implying otherwise is
+                 exactly the pattern this company audits out of other people's
+                 checkouts. -->
             <div class="field">
-              <label for="report-name">Your name</label>
+              <label for="report-name">Your name <span class="req">(required)</span></label>
               <input id="report-name" name="name" type="text" autocomplete="name" required>
             </div>
 
             <div class="field">
-              <label for="report-email">Work email</label>
+              <label for="report-email">Work email <span class="req">(required)</span></label>
               <input id="report-email" name="email" type="email" autocomplete="email" required
                      aria-describedby="report-email-hint">
               <p class="field-hint" id="report-email-hint">The report is delivered here, so use a real inbox.</p>
             </div>
 
             <div class="field">
-              <label for="report-phone">Phone</label>
+              <label for="report-phone">Phone <span class="req">(required)</span></label>
               <input id="report-phone" name="phone" type="tel" autocomplete="tel" required
                      aria-describedby="report-phone-hint">
-              <p class="field-hint" id="report-phone-hint">So we can talk it through if you want to.</p>
+              <p class="field-hint" id="report-phone-hint">So a specialist can talk the findings through with you.</p>
             </div>
 
             <!--

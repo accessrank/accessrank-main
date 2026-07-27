@@ -309,6 +309,72 @@
     });
   }
 
+  /* Clear any per-field error message and its aria wiring. */
+  function clearFieldErrors(form) {
+    form.querySelectorAll('.field-error').forEach(function (node) { node.remove(); });
+    form.querySelectorAll('[aria-invalid]').forEach(function (node) {
+      node.removeAttribute('aria-invalid');
+      var describedBy = (node.getAttribute('aria-describedby') || '')
+        .split(' ').filter(function (id) { return id && !/-error$/.test(id); }).join(' ');
+      if (describedBy) node.setAttribute('aria-describedby', describedBy);
+      else node.removeAttribute('aria-describedby');
+    });
+  }
+
+  /**
+   * Attach an error message directly beneath its field and wire it to the input
+   * with aria-describedby, so a screen reader announces the reason along with
+   * the field rather than leaving it in a status line elsewhere in the dialog.
+   */
+  function setFieldError(form, name, message) {
+    var field = form.querySelector('[name="' + name + '"]');
+    if (!field) return null;
+
+    var id = (field.id || name) + '-error';
+    var error = document.createElement('p');
+    error.className = 'field-error';
+    error.id = id;
+    error.textContent = message;
+
+    field.setAttribute('aria-invalid', 'true');
+    var describedBy = (field.getAttribute('aria-describedby') || '').split(' ').filter(Boolean);
+    if (describedBy.indexOf(id) === -1) describedBy.push(id);
+    field.setAttribute('aria-describedby', describedBy.join(' '));
+
+    var container = field.closest('.field') || field.parentNode;
+    container.appendChild(error);
+    return field;
+  }
+
+  /**
+   * Validate everything at once and report every problem together. Submitting
+   * to find one error, fixing it, then submitting to find the next is a
+   * needlessly hostile loop — especially in a modal.
+   */
+  function validateReportForm(form) {
+    var problems = [];
+    var name = form.querySelector('[name="name"]');
+    var email = form.querySelector('[name="email"]');
+    var phone = form.querySelector('[name="phone"]');
+    var consent = form.querySelector('[name="consent"]');
+
+    if (!name.value.trim() || name.value.trim().length < 2) {
+      problems.push({ field: 'name', message: 'Enter your name.' });
+    }
+    // Deliberately permissive: the server is the authority. This only catches
+    // the obvious cases so the visitor is not told "invalid" for a valid address.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.value.trim())) {
+      problems.push({ field: 'email', message: 'Enter a valid email address.' });
+    }
+    if (phone.value.replace(/[^\d]/g, '').length < 7) {
+      problems.push({ field: 'phone', message: 'Enter a phone number we can reach you on.' });
+    }
+    if (!consent.checked) {
+      problems.push({ field: 'consent', message: 'Please agree to the privacy policy so we can send your report.' });
+    }
+    return problems;
+  }
+
   if (modalForm) {
     modalForm.addEventListener('submit', function (e) {
       e.preventDefault();
@@ -320,15 +386,30 @@
       }
 
       var submit = modalForm.querySelector('[type="submit"]');
+      modalStatus.textContent = '';
+      modalStatus.className = 'form-status';
+      clearFieldErrors(modalForm);
+
+      // Report every problem at once, each beside its own field.
+      var problems = validateReportForm(modalForm);
+      if (problems.length) {
+        var firstField = null;
+        problems.forEach(function (problem) {
+          var field = setFieldError(modalForm, problem.field, problem.message);
+          if (!firstField) firstField = field;
+        });
+        modalStatus.textContent = problems.length === 1
+          ? 'Please correct the highlighted field.'
+          : 'Please correct the ' + problems.length + ' highlighted fields.';
+        modalStatus.className = 'form-status is-error';
+        if (firstField) firstField.focus();
+        return;
+      }
+
       modalForm.dataset.busy = '1';
       submit.disabled = true;
       submit.dataset.label = submit.dataset.label || submit.textContent;
       submit.textContent = 'Sending…';
-      modalStatus.textContent = '';
-      modalStatus.className = 'form-status';
-      modalForm.querySelectorAll('[aria-invalid]').forEach(function (node) {
-        node.removeAttribute('aria-invalid');
-      });
 
       var payload = { scanId: state.scanId };
       new FormData(modalForm).forEach(function (value, key) { payload[key] = value; });
@@ -346,12 +427,15 @@
         modalSuccess.setAttribute('tabindex', '-1');
         modalSuccess.focus();
       }).catch(function (err) {
-        modalStatus.textContent = err.message;
-        modalStatus.className = 'form-status is-error';
-        if (err.field) {
-          var field = modalForm.querySelector('[name="' + err.field + '"]');
-          if (field) { field.setAttribute('aria-invalid', 'true'); field.focus(); }
+        // The server is the authority — surface its message on the field it names.
+        if (err.field && modalForm.querySelector('[name="' + err.field + '"]')) {
+          var field = setFieldError(modalForm, err.field, err.message);
+          modalStatus.textContent = 'Please correct the highlighted field.';
+          modalStatus.className = 'form-status is-error';
+          if (field) field.focus();
         } else {
+          modalStatus.textContent = err.message;
+          modalStatus.className = 'form-status is-error';
           modalStatus.setAttribute('tabindex', '-1');
           modalStatus.focus();
         }
