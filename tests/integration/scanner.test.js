@@ -148,6 +148,54 @@ test('an HTTP error is reported as a friendly failure, not a crash', async () =>
   );
 });
 
+/**
+ * The SSRF case most guards miss: the submitted URL is public and passes every
+ * pre-navigation check, and only THEN redirects somewhere internal. This is an
+ * end-to-end test through the real browser, not a unit test of the predicate —
+ * it is the only thing that proves the Playwright route interception actually
+ * fires on a followed redirect.
+ *
+ * Note this runs with SCAN_ALLOW_PRIVATE=1, which is what lets the fixture
+ * server be reachable at all — so a failure here means the redirect was
+ * followed to the metadata endpoint even in the permissive configuration.
+ */
+test('a redirect to the cloud metadata endpoint does not yield its contents', async () => {
+  let result = null;
+  let error = null;
+  try {
+    result = await runScan(`${base}/redirect-to-metadata`, { maxPages: 1 });
+  } catch (err) {
+    error = err;
+  }
+
+  // Either outcome is acceptable — the request is refused, or it fails to load.
+  // What is NOT acceptable is a successful scan of 169.254.169.254.
+  if (result) {
+    assert.doesNotMatch(result.finalUrl, /169\.254\.169\.254/, 'the scanner followed a redirect to cloud metadata');
+    assert.doesNotMatch(JSON.stringify(result), /ami-id|instance-id|iam\/security-credentials/,
+      'metadata content appeared in the result');
+  } else {
+    assert.ok(error, 'expected either a safe result or an error');
+    assert.doesNotMatch(String(error.message), /169\.254/, 'the error must not echo the internal address');
+  }
+});
+
+test('a URL whose host resolves to loopback is refused when the guard is active', async () => {
+  // Re-import with the bypass off so the production predicate is what is tested.
+  const { normalizeTargetUrl } = await import('../../server/lib/ssrf.js');
+  const { default: config } = await import('../../server/lib/config.js');
+  const previous = config.security.allowPrivateTargets;
+
+  Object.defineProperty(config.security, 'allowPrivateTargets', { value: false, configurable: true });
+  try {
+    for (const target of ['http://127.0.0.1/', 'http://169.254.169.254/', 'http://[::1]/', 'http://10.0.0.1/']) {
+      assert.throws(() => normalizeTargetUrl(target), (err) => err instanceof BlockedTargetError, `${target} must be refused`);
+    }
+  } finally {
+    Object.defineProperty(config.security, 'allowPrivateTargets', { value: previous, configurable: true });
+  }
+});
+
 test('scan results are safe to serialize and are not enormous', async () => {
   const result = await runScan(`${base}/broken.html`, { maxPages: 1 });
   const json = JSON.stringify(result);

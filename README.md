@@ -97,6 +97,14 @@ genuinely are insignificant.
 **IPv6 is normalized to the /64 prefix.** ISPs delegate a /64 per subscriber, so
 counting full IPv6 addresses would make the per-IP quota meaningless.
 
+**IP identity fails closed.** An address that cannot be parsed maps to a shared
+bucket, never to "no limit". A pre-launch audit found the opposite: `clientIp()`
+returned an already-normalized value and the routes normalized it a second time,
+which turned every IPv6 `/64` string into `null` — and because the quota code
+guards with `if (ipHash)`, that silently disabled the per-IP cap for every IPv6
+visitor. The IPv4 tests passed the whole time. There are now HTTP-level tests
+asserting the cap over IPv6 and across address rotation inside one `/64`.
+
 **IPs are never stored in the clear** — only an HMAC-SHA256 keyed with
 `IP_HASH_SALT`. Equality-comparable, not reversible. Rotating that salt resets
 every quota, so treat it as permanent.
@@ -206,9 +214,11 @@ The same image runs on Render, Railway, or any VPS. Give it **2GB of RAM**:
 Chromium will be OOM-killed mid-scan on 512MB.
 
 In production the app **refuses to boot** without `DATABASE_URL`, `IP_HASH_SALT`,
-`RESEND_API_KEY`, `ADMIN_TOKEN` and an `https://` `SITE_URL`. That is deliberate —
-a deploy that silently drops leads or runs without abuse protection is worse than
-one that fails loudly.
+`RESEND_API_KEY`, `ADMIN_TOKEN`, both Turnstile keys, and an `https://` `SITE_URL`.
+That is deliberate — a deploy that silently drops leads or runs without bot
+defence is worse than one that fails loudly. Turnstile in particular produces no
+visible symptom when missing, so it is a boot failure rather than a warning;
+`ALLOW_NO_CAPTCHA=1` is the explicit opt-out.
 
 ---
 

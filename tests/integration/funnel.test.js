@@ -251,6 +251,68 @@ test('three reports per IP per day, then blocked', async () => {
   assert.equal(other.status, 200);
 });
 
+/**
+ * REGRESSION — the per-IP cap was completely inert over IPv6.
+ *
+ * `clientIp()` returned an already-normalized value and the routes then called
+ * `hashIp(clientIp(req))`, normalizing twice. An IPv6 /64 prefix is not a
+ * parseable literal, so the second pass returned null, and every quota check
+ * (`if (ipHash)`) silently skipped. Any visitor on IPv6 — most residential and
+ * mobile connections — had unlimited reports, with no attacker effort at all.
+ *
+ * The IPv4 tests above all passed throughout, which is exactly why this needs
+ * its own test at the HTTP level.
+ */
+test('the per-IP cap applies over IPv6, not just IPv4', async () => {
+  const ipv6 = '2a00:1450:4001:80f:abcd:1234:5678:9abc';
+  const scan = await scanFixture('broken.html', { ip: ipv6 });
+
+  for (let i = 0; i < config.limits.reportsPerIpPerDay; i += 1) {
+    const res = await post('/api/report', reportBody(scan.body.scanId, { email: `v6user${i}@example.com` }), { ip: ipv6 });
+    assert.equal(res.status, 200, `IPv6 report ${i + 1} should succeed`);
+  }
+
+  const blocked = await post(
+    '/api/report',
+    reportBody(scan.body.scanId, { email: 'v6-too-many@example.com' }),
+    { ip: ipv6 },
+  );
+  assert.equal(blocked.status, 429, 'the fourth IPv6 report must be refused');
+  assert.equal(blocked.body.code, 'ip_limit');
+});
+
+test('rotating the host part of an IPv6 address does not buy more reports', async () => {
+  // A subscriber owns an entire /64 — billions of addresses. Counting full
+  // addresses would make the cap meaningless.
+  const prefix = '2001:db8:1234:5678';
+  const scan = await scanFixture('broken.html', { ip: `${prefix}::1` });
+
+  for (let i = 0; i < config.limits.reportsPerIpPerDay; i += 1) {
+    const res = await post(
+      '/api/report',
+      reportBody(scan.body.scanId, { email: `rot${i}@example.com` }),
+      { ip: `${prefix}:aaaa:bbbb:cccc:${1000 + i}` },
+    );
+    assert.equal(res.status, 200);
+  }
+
+  const blocked = await post(
+    '/api/report',
+    reportBody(scan.body.scanId, { email: 'rot-extra@example.com' }),
+    { ip: `${prefix}:ffff:eeee:dddd:9999` },
+  );
+  assert.equal(blocked.status, 429, 'a different address in the same /64 is the same client');
+  assert.equal(blocked.body.code, 'ip_limit');
+
+  // A genuinely different /64 is a different client.
+  const other = await post(
+    '/api/report',
+    reportBody(scan.body.scanId, { email: 'other-prefix@example.com' }),
+    { ip: '2001:db8:1234:9999::1' },
+  );
+  assert.equal(other.status, 200);
+});
+
 test('a bot-trapped submission gets a fake success and records nothing', async () => {
   const scan = await scanFixture();
   const { status, body } = await post('/api/report', {

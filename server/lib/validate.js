@@ -135,9 +135,10 @@ const TURNSTILE_VERIFY_URL = 'https://challenges.cloudflare.com/turnstile/v0/sit
  * Verify a Cloudflare Turnstile token.
  *
  * When Turnstile is not configured the check is skipped, so the site works out
- * of the box in development. Production refuses to boot without it — see
- * assertProductionConfig — so "unconfigured" can never silently mean "unprotected"
- * on a deployed instance.
+ * of the box in development. `assertProductionConfig` makes missing keys a fatal
+ * boot error in production, so "unconfigured" cannot silently mean "unprotected"
+ * on a deployed instance — unless the operator sets ALLOW_NO_CAPTCHA=1, which is
+ * the explicit, logged opt-out.
  */
 export async function verifyTurnstile(token, remoteIp) {
   if (!config.turnstile.enabled) return { ok: true, skipped: true };

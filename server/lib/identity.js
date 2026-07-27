@@ -1,6 +1,13 @@
 import crypto from 'node:crypto';
 import net from 'node:net';
 import config from './config.js';
+import { log } from './logger.js';
+
+/**
+ * Shared bucket for clients whose address cannot be determined. Deliberately a
+ * real key rather than null, so quotas still apply. See hashIp().
+ */
+export const UNKNOWN_CLIENT = 'unknown-client';
 
 /**
  * Identity normalization for quota enforcement.
@@ -163,6 +170,12 @@ export function normalizeIp(ip) {
   if (typeof ip !== 'string' || !ip) return null;
   let value = ip.trim();
 
+  // Idempotence. normalizeIp("2a00:1450::/64") must return the same string, not
+  // null: an IPv6 /64 prefix is not a parseable literal, so a second pass used
+  // to reject its own output. Because callers guard with `if (ipHash)`, that
+  // null silently DISABLED the per-IP quota for every IPv6 visitor.
+  if (/^[0-9a-f:]+::\/64$/i.test(value)) return value.toLowerCase();
+
   const zone = value.indexOf('%');
   if (zone !== -1) value = value.slice(0, zone);
   if (value.startsWith('[') && value.endsWith(']')) value = value.slice(1, -1);
@@ -210,7 +223,15 @@ function expandIpv6(addr) {
  */
 export function hashIp(ip) {
   const normalized = normalizeIp(ip);
-  if (!normalized) return null;
+  if (!normalized) {
+    // Fail CLOSED. Returning null here makes every caller's `if (ipHash)` guard
+    // skip the quota entirely, which is how an unparseable address became an
+    // unlimited one. An unidentifiable client shares one bucket instead.
+    log.warn('client address could not be normalized — using the shared quota bucket', {
+      raw: typeof ip === 'string' ? ip.slice(0, 60) : typeof ip,
+    });
+    return UNKNOWN_CLIENT;
+  }
   const salt = config.security.ipHashSalt;
   if (!salt) {
     // Never silently fall back to an unsalted digest — that would be reversible
@@ -222,24 +243,46 @@ export function hashIp(ip) {
 }
 
 /**
- * Extract the client address. Express populates `req.ip` from X-Forwarded-For
- * according to the configured `trust proxy` hop count, so this must never read
- * the raw header itself — that is spoofable and would let anyone mint unlimited
- * quota by sending `X-Forwarded-For: <random>`.
+ * Extract the client address, UNMODIFIED.
+ *
+ * Returns the raw address rather than the quota-normalized form. Two reasons:
+ *   - callers do `hashIp(clientIp(req))`, and hashIp normalizes internally;
+ *     returning a pre-normalized value made that a double normalization
+ *   - Cloudflare Turnstile's `remoteip` parameter wants a real address, not a
+ *     /64 prefix string
+ *
+ * Express populates `req.ip` from X-Forwarded-For according to the configured
+ * `trust proxy` hop count, so this must never read the raw header itself — that
+ * is spoofable and would let anyone mint unlimited quota by sending
+ * `X-Forwarded-For: <random>`.
  */
 export function clientIp(req) {
-  return normalizeIp(req.ip || req.socket?.remoteAddress || '');
+  return req.ip || req.socket?.remoteAddress || null;
 }
 
 /* ---------------------------------------------------------------- misc --- */
 
-/** Collapse whitespace and strip control characters from a free-text field. */
+/**
+ * Clean a free-text field for storage.
+ *
+ * Angle brackets are STRIPPED, not escaped. Escaping at write time would be the
+ * wrong fix: it corrupts the data (a company called "Ben & Co" must not be stored
+ * as "Ben &amp; Co" and then reach an email that way), and correct output encoding
+ * already happens at every render point — PDF, email and HTML all run values
+ * through escapeHtml().
+ *
+ * But a name or company has no legitimate reason to contain markup, so removing
+ * the characters means a stored-XSS payload never exists in the database at all.
+ * A future admin dashboard that forgets to escape then cannot be the only thing
+ * standing between a public lead form and script execution.
+ */
 export function cleanText(raw, maxLength = 200) {
   if (typeof raw !== 'string') return '';
   return raw
     .normalize('NFKC')
     // eslint-disable-next-line no-control-regex
     .replace(/[\u0000-\u001F\u007F]/g, ' ')
+    .replace(/[<>]/g, '')
     .replace(/\s+/g, ' ')
     .trim()
     .slice(0, maxLength);

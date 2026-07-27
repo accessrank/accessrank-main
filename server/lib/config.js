@@ -168,6 +168,25 @@ export function assertProductionConfig() {
   }
   if (!/^https:\/\//.test(config.siteUrl)) fatal.push('SITE_URL must be an https:// origin in production.');
 
+  /**
+   * Turnstile is the only real bot defence. The honeypot is trivially skipped by
+   * anything that reads the DOM, and the timing check is deliberately advisory.
+   * Without a challenge, the per-IP quota is all that stands between a botnet
+   * and the report endpoint — and a botnet has more IPs than we have limits.
+   *
+   * Forgetting these two variables is an easy deploy mistake that produces no
+   * visible symptom, so it fails the boot instead. ALLOW_NO_CAPTCHA=1 is the
+   * documented, deliberate opt-out for anyone who genuinely wants to run
+   * without it.
+   */
+  if (!config.turnstile.enabled && !bool(env.ALLOW_NO_CAPTCHA, false)) {
+    fatal.push(
+      'TURNSTILE_SITE_KEY and TURNSTILE_SECRET_KEY are required in production. '
+      + 'Without a challenge the abuse limits are the only bot defence. '
+      + 'Set ALLOW_NO_CAPTCHA=1 to override deliberately.',
+    );
+  }
+
   if (fatal.length) {
     throw new Error(`Refusing to start in production:\n  - ${fatal.join('\n  - ')}`);
   }
