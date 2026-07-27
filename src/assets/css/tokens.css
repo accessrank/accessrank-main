@@ -1,0 +1,54 @@
+/*
+ * tokens.css — design tokens (custom properties) only.
+ * Generated from legacy/index.html (<style> :root block) and legacy/auth.css
+ * (:root block). Where the two sources disagreed on a value, index.html was
+ * kept as canonical and the auth.css value is noted in a trailing comment.
+ */
+
+:root, [data-scheme="amber"] {
+  /* ---- Brand ---- */
+  --brand: #FFD23F;
+  --brand-rgb: 255, 210, 63;
+  --brand-ink: #0E0E10;
+  --brand-soft: rgba(255, 210, 63, 0.12);
+  --brand-border: rgba(255, 210, 63, 0.30);
+  --keyline: rgba(255, 210, 63, 0.32);
+
+  /* ---- Accent (status colors) ---- */
+  --warning: #FF6B47;
+  --warning-soft: #FF8B6E; /* index.html only; auth.css never declared --warning-soft. unused as of migration — no rule in either source consumes var(--warning-soft) (the local .risk-strip re-declaration of it is likewise never read, see home.css) */
+  --danger: #DC2626; /* promoted: was hardcoded 4x in index.html (.overlay-icon, .lawsuit-eyebrow bg+border, .lawsuit-cta) */
+  --blue-500: #3B82F6; /* promoted: was hardcoded across aurora blobs, .audit-card border/shadow, .risk-card:hover (index.html + auth.css) */
+  --blue-600: #2563EB; /* promoted: was hardcoded across aurora blobs, .marquee/.stats-strip gradient, .topnav .free-audit (index.html + auth.css) */
+  --blue-700: #1D4ED8; /* promoted: was hardcoded in aurora .b6 + .report-cta:hover (index.html) */
+  --blue-800: #1E40AF; /* promoted: was hardcoded across aurora blobs + .marquee/.stats-strip gradient mid-stop (index.html + auth.css) */
+  --blue-900: #0C2A6B; /* promoted: was hardcoded as .marquee/.stats-strip gradient end-stop (index.html) */
+
+  /* ---- Surface / background ---- */
+  --bg: #14142A;
+  --surface: #101838;
+  --surface-2: #0C1330; /* auth.css only */
+
+  /* ---- Text ---- */
+  --text: #FFFFFF;
+  --text-soft: #D4D0C5;
+  --text-muted: #B5B0A4;
+  --text-faint: #9A9590;
+  --text-fainter: #9A948B; /* index.html only */
+
+  /* ---- Lines / hairlines / form fields ---- */
+  --hairline: rgba(240, 237, 229, 0.28); /* was: rgba(240, 237, 229, 0.14) in auth.css */
+  --hairline-strong: rgba(240, 237, 229, 0.36); /* was: rgba(240, 237, 229, 0.22) in auth.css */
+  --field-bg: rgba(255, 255, 255, 0.04); /* auth.css only */
+  --field-border: rgba(240, 237, 229, 0.20); /* auth.css only */
+
+  /* ---- Homepage-only decorative accents ---- */
+  --overlay-stripe-a: #0F1A33;
+  --overlay-stripe-b: #16264A;
+  --overlay-body: #E8DCC4;
+  --aurora-opacity: 0.42;
+  --aurora-accent: #7C3AED; /* unused as of migration — declared in index.html :root but never referenced */
+
+  /* ---- Motion ---- */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1); /* was: cubic-bezier(0.16, 1, 0.3, 1) in auth.css */
+}

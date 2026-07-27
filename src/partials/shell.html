@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" data-scheme="amber">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }}</title>
+  <meta name="description" content="{{ page.description }}">
+  <link rel="canonical" href="{{ canonical }}">
+  {{#if page.noindex}}<meta name="robots" content="noindex, nofollow">{{/if}}
+
+  <meta name="theme-color" content="#14142A">
+  <meta name="color-scheme" content="dark">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ site.name }}">
+  <meta property="og:title" content="{{ page.title }}">
+  <meta property="og:description" content="{{ page.description }}">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:image" content="{{ siteUrl }}/assets/img/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Accessrank — WCAG 2.2 AA remediation and SEO for DTC ecommerce">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ page.title }}">
+  <meta name="twitter:description" content="{{ page.description }}">
+  <meta name="twitter:image" content="{{ siteUrl }}/assets/img/og-image.png">
+
+  <link rel="icon" href="/assets/img/favicon.svg" type="image/svg+xml">
+  <link rel="alternate icon" href="/assets/img/favicon-32.png" type="image/png" sizes="32x32">
+  <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
+
+  <link rel="preload" href="/assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/inter-latin-700.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{{ cssHref }}">
+
+  {{{ structuredData }}}
+  {{#if plausibleDomain}}<script defer data-domain="{{ plausibleDomain }}" src="{{ plausibleSrc }}"></script>{{/if}}
+  {{#if turnstileSiteKey}}<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>{{/if}}
+  <script src="{{ jsHref }}" defer></script>
+</head>
+<body class="site" data-page="{{ page.url }}"{{#if turnstileSiteKey}} data-turnstile-key="{{ turnstileSiteKey }}"{{/if}}>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+
+  <div class="aurora" aria-hidden="true">
+    <span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span><span class="blob b4"></span>
+    <span class="blob b5"></span><span class="blob b6"></span><span class="blob b7"></span><span class="blob b8"></span>
+  </div>
+
+  {{> nav }}
+
+  <main id="main-content">
+{{{ body }}}
+  </main>
+
+  {{> footer }}
+</body>
+</html>

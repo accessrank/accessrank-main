@@ -1,0 +1,72 @@
+/*
+ * base.css — reset, html/body & typography defaults, focus-visible styles,
+ * a11y utilities (.visually-hidden, .skip-link), global prefers-reduced-motion
+ * handling, and the shared .aurora background component.
+ * Generated from legacy/index.html (<style> block) + legacy/auth.css.
+ */
+
+/* ---- Reset ---- */
+html { scroll-behavior: smooth; } /* was index.html-only; promoted site-wide, paired with the reduced-motion override below */
+html, body { margin: 0; padding: 0; background: var(--bg); } /* was: background: #14142A; (literal) in index.html — now references the token it duplicated */
+* { box-sizing: border-box; } /* consolidates index.html's ".site *" (identical rule, narrower scope) */
+button { font-family: inherit; cursor: pointer; border: none; background: transparent; } /* consolidates index.html's ".site button" (identical rule, narrower scope) */
+
+/* Shared body typography/background base — consolidates index.html's ".site"
+   rule and auth.css's "body" rule, which declared the same font-family,
+   background and color. Page-specific leftovers (.site's overflow:hidden;
+   body's min-height/overflow-x) stay in home.css / pages.css respectively. */
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text-soft);
+  position: relative;
+  z-index: 0;
+}
+
+/* ---- Aurora background component ----
+   Reconciled from index.html (8 blobs, position:absolute) and auth.css
+   (4 blobs, position:fixed). Per migration spec: keep the 8-blob layout,
+   switch to position:fixed. Selectors are unprefixed (no ".site"/".page"
+   ancestor) so the same rule serves every page. */
+.aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; } /* was: position: absolute; z-index: -1; in index.html — z-index kept from index.html; auth.css used z-index: -2 */
+.aurora span { position: absolute; border-radius: 50%; filter: blur(80px) saturate(1.1); opacity: var(--aurora-opacity, 0.62); will-change: transform; } /* was: filter: blur(90px) saturate(1.1); opacity: 0.36; in auth.css */
+.aurora .b1 { width: 58%; padding-bottom: 58%; top: 8%; left: -10%; background: var(--blue-600); animation: auroraDrift1 30s ease-in-out infinite; }
+.aurora .b2 { width: 64%; padding-bottom: 64%; top: 32%; right: -16%; background: var(--blue-500); animation: auroraDrift2 37s ease-in-out infinite; }
+.aurora .b3 { width: 54%; padding-bottom: 54%; top: 52%; left: 26%; background: var(--blue-800); animation: auroraDrift3 34s ease-in-out infinite; }
+.aurora .b4 { width: 52%; padding-bottom: 52%; top: -12%; right: 4%; background: var(--blue-600); animation: auroraDrift4 40s ease-in-out infinite; }
+.aurora .b5 { width: 56%; padding-bottom: 56%; top: 70%; left: -12%; background: var(--blue-500); animation: auroraDrift5 31s ease-in-out infinite; }
+.aurora .b6 { width: 56%; padding-bottom: 56%; top: 80%; right: -14%; background: var(--blue-700); animation: auroraDrift6 38s ease-in-out infinite; }
+.aurora .b7 { width: 54%; padding-bottom: 54%; top: 88%; left: 24%; background: var(--blue-600); animation: auroraDrift7 35s ease-in-out infinite; }
+.aurora .b8 { width: 48%; padding-bottom: 48%; bottom: -8%; right: 18%; background: var(--blue-800); animation: auroraDrift8 27s ease-in-out infinite; }
+@keyframes auroraDrift1 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(38%,46%) scale(1.22); } 50% { transform: translate(-28%,64%) scale(0.88); } 75% { transform: translate(46%,-26%) scale(1.16); } }
+@keyframes auroraDrift2 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(-48%,34%) scale(1.12); } 50% { transform: translate(26%,-46%) scale(1.28); } 75% { transform: translate(-34%,-30%) scale(0.85); } }
+@keyframes auroraDrift3 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(54%,-34%) scale(0.9); } 50% { transform: translate(-50%,24%) scale(1.3); } 75% { transform: translate(28%,52%) scale(1.05); } }
+@keyframes auroraDrift4 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(-30%,-50%) scale(1.2); } 50% { transform: translate(50%,28%) scale(0.86); } 75% { transform: translate(-44%,40%) scale(1.2); } }
+@keyframes auroraDrift5 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(40%,-58%) scale(1.1); } 50% { transform: translate(-56%,-22%) scale(1.28); } 75% { transform: translate(22%,-48%) scale(0.92); } }
+@keyframes auroraDrift6 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(-50%,30%) scale(0.9); } 50% { transform: translate(34%,56%) scale(1.24); } 75% { transform: translate(56%,-32%) scale(1.1); } }
+@keyframes auroraDrift7 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(44%,-44%) scale(1.16); } 50% { transform: translate(-34%,50%) scale(0.85); } 75% { transform: translate(-50%,-28%) scale(1.26); } }
+@keyframes auroraDrift8 { 0%,100% { transform: translate(0,0) scale(1); } 25% { transform: translate(-38%,-34%) scale(1.12); } 50% { transform: translate(50%,-50%) scale(0.9); } 75% { transform: translate(34%,44%) scale(1.22); } }
+/* auth.css's 4-blob variant (aDrift1-4) is superseded by the 8-blob layout above per migration spec (base.css spec:
+   "keep the 8-blob version but use position:fixed"). Keyframes preserved, unused, so nothing is silently dropped. */
+@keyframes aDrift1 { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(34%,42%) scale(1.18);} 66%{transform:translate(-26%,26%) scale(0.9);} } /* unused as of migration */
+@keyframes aDrift2 { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(-42%,30%) scale(1.1);} 66%{transform:translate(24%,-40%) scale(1.24);} } /* unused as of migration */
+@keyframes aDrift3 { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(48%,-30%) scale(0.9);} 66%{transform:translate(-44%,22%) scale(1.26);} } /* unused as of migration */
+@keyframes aDrift4 { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(-28%,-44%) scale(1.16);} 66%{transform:translate(44%,24%) scale(0.88);} } /* unused as of migration */
+@media (prefers-reduced-motion: reduce) { .aurora span { animation: none !important; } }
+/* Mobile: the blurred blob field is the dominant paint cost on throttled CPUs.
+   Hold it static (no infinite animation), thin it to 4 blobs, and drop the blur radius. */
+@media (max-width: 1000px) {
+  .aurora span { animation: none !important; will-change: auto; filter: blur(52px) saturate(1.1); } /* was: filter: blur(60px) saturate(1.1); in auth.css */
+  .aurora .b5, .aurora .b6, .aurora .b7, .aurora .b8 { display: none; } /* index.html only — thins the 8-blob layout to 4 on mobile; no auth.css equivalent needed since auth.css only ever had 4 blobs */
+}
+
+/* ---- Accessibility ---- */
+.skip-link { position: absolute; left: 12px; top: -60px; z-index: 200; background: var(--brand); color: var(--brand-ink); padding: 10px 16px; border-radius: 8px; font-weight: 600; font-size: 14px; transition: top 0.15s ease; }
+.skip-link:focus { top: 12px; }
+.visually-hidden { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; border-radius: 4px; } /* was scoped ".site a/button/input:focus-visible" in index.html only; promoted site-wide — secondary pages had no equivalent generic focus-visible rule */
+
+/* ---- prefers-reduced-motion (global) ---- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}

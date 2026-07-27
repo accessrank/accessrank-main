@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build the site
+        run: npm run build
+        env:
+          SITE_URL: https://accessrank.ai
+
+      - name: Unit and integration tests
+        run: npm test
+
+      # The site sells WCAG 2.2 AA conformance. Shipping a marketing page with
+      # accessibility violations would be self-refuting, so this gates the build.
+      - name: Audit our own site with axe-core
+        run: npm run test:a11y
+
+      - name: Check every internal link resolves
+        run: npm run test:links
+
+      - name: Verify production config is enforced
+        # Booting with NODE_ENV=production and no secrets must fail loudly rather
+        # than silently running without a database or abuse protection.
+        run: |
+          set +e
+          NODE_ENV=production SITE_URL=https://accessrank.ai node server/index.js 2>&1 | tee boot.log
+          if grep -q "Refusing to start in production" boot.log; then
+            echo "Production config guard works."
+            exit 0
+          fi
+          echo "Production guard did NOT fire — the app would have started unsafely."
+          exit 1
+
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: docker build -t accessrank:ci --build-arg SITE_URL=https://accessrank.ai .
+      - name: Boot it and check health
+        run: |
+          docker run -d --name accessrank-ci -p 3000:3000 \
+            -e NODE_ENV=development -e SITE_URL=http://localhost:3000 accessrank:ci
+          for i in $(seq 1 30); do
+            if curl -fsS http://localhost:3000/api/health > /dev/null; then
+              echo "Healthy after ${i}s"
+              curl -fsS http://localhost:3000/api/health
+              curl -fsSo /dev/null -w 'homepage: %{http_code}\n' http://localhost:3000/
+              docker rm -f accessrank-ci
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Container never became healthy:"
+          docker logs accessrank-ci
+          exit 1

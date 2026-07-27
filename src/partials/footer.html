@@ -1,0 +1,42 @@
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <a class="logo" href="/" aria-label="Accessrank home">
+          <span class="logo-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+              <polyline points="4 12.5 9.5 18 20 6.5"></polyline>
+            </svg>
+          </span>
+          <span class="logo-word">Accessrank</span>
+        </a>
+        <p class="footer-tagline">{{ site.tagline }}</p>
+        <p class="footer-contact">
+          <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+        </p>
+      </div>
+
+      <nav class="footer-cols" aria-label="Footer">
+        {{#each footer}}
+        <div class="footer-col">
+          <h2 class="footer-heading">{{ this.heading }}</h2>
+          <ul class="footer-list">
+            {{#each this.links}}
+            <li><a href="{{ this.href }}">{{ this.label }}</a></li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/each}}
+      </nav>
+    </div>
+
+    <div class="footer-legal">
+      <p>
+        Accessrank provides accessibility remediation and monitoring services. We are not a law firm
+        and nothing on this site is legal advice. Conformance with WCAG 2.2 Level AA reduces
+        accessibility barriers and legal exposure but cannot guarantee any particular legal outcome.
+        Statistics cited are from the named third-party sources and describe the market generally,
+        not results you should expect. See our <a href="/disclosure">Disclosure</a>.
+      </p>
+      <p class="footer-copy">&copy; {{ year }} {{ site.legalName }}. All rights reserved.</p>
+    </div>
+  </footer>

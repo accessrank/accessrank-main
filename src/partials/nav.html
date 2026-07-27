@@ -1,0 +1,21 @@
+  <nav class="site-nav" aria-label="Primary">
+    <a class="logo" href="/" aria-label="Accessrank home">
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+          <polyline points="4 12.5 9.5 18 20 6.5"></polyline>
+        </svg>
+      </span>
+      <span class="logo-word">Accessrank</span>
+    </a>
+
+    <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+      <span class="nav-toggle-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+      <span class="visually-hidden">Menu</span>
+    </button>
+
+    <div class="nav-right" id="nav-menu">
+      {{#each nav}}
+      <a class="nav-link{{#if this.cta}} cta-nav{{/if}}" href="{{ this.href }}">{{ this.label }}</a>
+      {{/each}}
+    </div>
+  </nav>
