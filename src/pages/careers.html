@@ -1,0 +1,45 @@
+<section class="doc-main">
+  <article class="doc">
+    <a class="back-link" href="/">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M8.5 3 L4 7 L8.5 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to site
+    </a>
+    <header class="doc-head">
+      <span class="eyebrow-pill">Careers</span>
+      <h1>Make ecommerce work<br>for everyone.</h1>
+      <p class="updated">Remote-first · Distributed across US &amp; EU time zones</p>
+    </header>
+
+    <p class="doc-lede">We build the tooling that brings online stores to WCAG 2.2 AA — and keeps them there. It's engineering, accessibility craft, and customer trust in equal measure. If shipping fixes that let more people shop sounds like your kind of work, we'd love to meet you.</p>
+
+    <section>
+      <h2>Open roles</h2>
+      <div class="job-list">
+        {{#each jobs}}
+        <a class="job" href="/careers/{{ this.slug }}">
+          <div>
+            <div class="job-role">{{ this.title }}</div>
+            <div class="job-meta"><span>{{ this.team }}</span><span>{{ this.location }}</span><span>{{ this.type }}</span></div>
+          </div>
+          <span class="job-arrow" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M5 3 L9 7 L5 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </a>
+        {{/each}}
+      </div>
+    </section>
+
+    <section>
+      <h2>Why Accessrank</h2>
+      <div class="perks">
+        <div class="perk"><h3>Remote-first</h3><p>Work from anywhere in US/EU time zones, with a yearly stipend to set up your space.</p></div>
+        <div class="perk"><h3>Real impact</h3><p>Every fix you ship makes a store usable for more people. The work matters.</p></div>
+        <div class="perk"><h3>Health &amp; time off</h3><p>Comprehensive medical, dental, and vision, plus generous, actually-used PTO.</p></div>
+        <div class="perk"><h3>Growth budget</h3><p>Certifications (CPACC, WAS), conferences, and courses on us.</p></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Don't see your role?</h2>
+      <p>We're always glad to hear from thoughtful people who care about accessibility. Send us a note and tell us how you'd contribute at <a href="mailto:info@accessrank.ai">info@accessrank.ai</a>.</p>
+    </section>
+  </article>
+</section>

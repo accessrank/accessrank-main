@@ -1,0 +1,38 @@
+<section class="doc-main">
+  <article class="doc">
+    <a class="back-link" href="/careers">
+      <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M8.5 3 L4 7 L8.5 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Back to careers
+    </a>
+    <header class="doc-head">
+      <span class="eyebrow-pill">{{ job.team }}</span>
+      <h1>{{ job.title }}</h1>
+      <p class="updated">{{ job.location }} · {{ job.type }}</p>
+    </header>
+
+    <p class="doc-lede">{{ job.summary }}</p>
+
+    <section id="responsibilities">
+      <h2>What you'll do</h2>
+      <ul>
+        {{#each job.responsibilities}}
+        <li>{{ this }}</li>
+        {{/each}}
+      </ul>
+    </section>
+
+    <section id="requirements">
+      <h2>What we're looking for</h2>
+      <ul>
+        {{#each job.requirements}}
+        <li>{{ this }}</li>
+        {{/each}}
+      </ul>
+    </section>
+
+    <section id="apply">
+      <h2>Apply</h2>
+      <p>Send your CV and a short note on why this role interests you to <a href="mailto:info@accessrank.ai?subject=Application:%20{{ job.title }}">info@accessrank.ai</a>. Mention the role title so it reaches the right inbox.</p>
+    </section>
+  </article>
+</section>

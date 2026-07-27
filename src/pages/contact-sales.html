@@ -1,0 +1,113 @@
+<section class="auth-main">
+  <div class="auth-grid wide">
+    <div class="auth-copy">
+      <a class="back-link" href="/">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M8.5 3 L4 7 L8.5 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to site
+      </a>
+      <div class="intro">
+        <span class="eyebrow-pill">Enterprise</span>
+        <h1>Built for <span class="accent">Shopify Plus</span><br>and multi-brand catalogues.</h1>
+        <p>Tell us about your stores and we will map a remediation plan, timeline, and pricing. Most teams hear back within one business day.</p>
+      </div>
+      <div class="trust-row">
+        <span class="item"><span class="tick"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3 7 L6 10 L11 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Unlimited pages, real-time monitoring</span>
+        <span class="item"><span class="tick"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3 7 L6 10 L11 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Dedicated CSM &amp; custom integrations</span>
+        <span class="item"><span class="tick"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3 7 L6 10 L11 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>VPAT, reporting &amp; SLA support</span>
+      </div>
+    </div>
+
+    <div class="form-card wide">
+      <h2 class="form-title">Talk to sales</h2>
+      <p class="form-sub">Share a few details and we will come back with a tailored plan.</p>
+
+      <form id="contactSalesForm" data-lead-form novalidate>
+        <input type="hidden" name="source" value="contact_sales">
+        <input type="hidden" name="plan" value="enterprise">
+
+        <div class="field-row">
+          <div class="field">
+            <label for="sales-firstName">First name</label>
+            <input type="text" id="sales-firstName" name="firstName" autocomplete="given-name" placeholder="Jordan" required>
+          </div>
+          <div class="field">
+            <label for="sales-lastName">Last name</label>
+            <input type="text" id="sales-lastName" name="lastName" autocomplete="family-name" placeholder="Rivera" required>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="sales-email">Work email</label>
+            <input type="email" id="sales-email" name="email" autocomplete="email" placeholder="jordan@yourstore.com" required>
+          </div>
+          <div class="field">
+            <label for="sales-company">Company</label>
+            <input type="text" id="sales-company" name="company" autocomplete="organization" placeholder="Your brand" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="sales-website">Store URL</label>
+          <input type="url" id="sales-website" name="website" autocomplete="url" placeholder="https://yourstore.com" required>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="sales-platform">Platform</label>
+            <select id="sales-platform" name="platform" required>
+              <option value="" disabled selected>Select…</option>
+              <option>Shopify Plus</option>
+              <option>Shopify</option>
+              <option>WooCommerce</option>
+              <option>BigCommerce</option>
+              <option>Custom build</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="sales-pages">Catalogue size</label>
+            <select id="sales-pages" name="pages" required>
+              <option value="" disabled selected>Select…</option>
+              <option>Under 5,000 pages</option>
+              <option>5,000 – 25,000 pages</option>
+              <option>25,000 – 100,000 pages</option>
+              <option>100,000+ pages</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="sales-message">What are you hoping to solve? <span class="opt">(optional)</span></label>
+          <textarea id="sales-message" name="message" placeholder="e.g. Multiple storefronts, a pending demand letter, or an upcoming EAA deadline…"></textarea>
+        </div>
+
+        <div class="hp-field" aria-hidden="true">
+          <label for="sales-company-website">Company website</label>
+          <input id="sales-company-website" name="company_website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <input type="hidden" name="formLoadedAt" value="">
+
+        <div class="field field-check">
+          <input id="sales-consent" name="consent" type="checkbox" required>
+          <label for="sales-consent">I agree to Accessrank contacting me and accept the <a href="/privacy">privacy policy</a>.</label>
+        </div>
+        <div class="field field-check">
+          <input id="sales-marketing" name="marketingOptIn" type="checkbox">
+          <label for="sales-marketing">Send me occasional accessibility and SEO guidance.</label>
+        </div>
+
+        {{#if turnstileSiteKey}}<div class="cf-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="dark"></div>{{/if}}
+
+        <p class="form-status" data-form-status role="alert" aria-live="assertive"></p>
+
+        <button class="submit-btn" type="submit">Request a plan</button>
+      </form>
+
+      <div class="form-success" data-form-success hidden>
+        <h2>Thanks — we are on it.</h2>
+        <p>A specialist will reach out within one business day with a tailored plan and pricing.</p>
+      </div>
+    </div>
+  </div>
+</section>

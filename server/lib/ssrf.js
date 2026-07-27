@@ -32,6 +32,8 @@ export class BlockedTargetError extends Error {
     this.code = code;
     /** Safe to show a visitor: never leaks whether an internal host exists. */
     this.public = true;
+    /** A rejected target is bad input, not a server fault. */
+    this.status = 400;
   }
 }
 

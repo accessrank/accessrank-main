@@ -60,8 +60,10 @@
 .nav-right a:not(.cta-nav) { color: var(--text-soft); }
 
 /* ---- Hero ---- */
-.hero { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 500px); justify-content: center; gap: 28px; padding: 56px var(--edge) 36px; align-items: center; }
-.hero > div:first-child { transform: translate(12px, -28px); }
+.hero { display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 500px); justify-content: center; gap: 40px; padding: 64px var(--edge) 44px; align-items: center; }
+/* The legacy `transform: translate(12px, -28px)` on the first column was a magic
+ * nudge tuned to the old markup. Against the current DOM it lifted the eyebrow
+ * up into the risk cards above. Spacing is handled by padding now. */
 .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 11px; letter-spacing: 3px; color: var(--brand); font-weight: 500; margin-bottom: 22px; }
 .pulse-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brand); animation: p14 2s ease-in-out infinite; }
 @keyframes p14 { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -78,9 +80,11 @@
 
 /* ---- Audit card ---- */
 .audit-card { background: var(--surface); border-radius: 14px; padding: 22px; border: 1px solid var(--blue-500); box-shadow: 0 18px 40px -16px rgba(59,130,246,.55), 0 0 0 1px rgba(59,130,246,.4); }
-.audit-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-.audit-title { font-size: 11px; letter-spacing: 3px; color: var(--brand); font-weight: 500; }
-.audit-meta { font-size: 11px; color: var(--text-faint); } /* TODO(contrast): verify against WCAG 1.4.3 */
+.audit-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+/* This is a real <h2> now, not the old decorative "LIVE AUDIT" label, so it is
+ * styled as a card heading rather than a micro-caption. */
+.audit-title { font-size: 19px; line-height: 1.2; letter-spacing: -0.4px; color: var(--text); font-weight: 700; text-align: left; margin: 0; }
+.audit-meta { font-size: 11px; color: var(--text-muted); white-space: nowrap; flex: none; }
 .url-form { display: flex; gap: 8px; margin-bottom: 14px; }
 .url-input { flex: 1; background: var(--bg); border: 1px solid rgba(240, 237, 229, 0.15); color: var(--text); padding: 11px 14px; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; }
 .url-input::placeholder { color: var(--text-fainter); } /* TODO(contrast): verify against WCAG 1.4.3 */
@@ -139,7 +143,9 @@
 @keyframes mq14 { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ---- Risk strip ---- */
-.risk-strip { padding: 37px var(--edge) 2px; --warning: var(--blue-500); --warning-soft: #60A5FA; } /* --warning-soft: unused as of migration — no descendant rule reads var(--warning-soft) */
+/* Bottom padding was 2px, which only worked because the hero pulled itself up
+ * over it with a transform. */
+.risk-strip { padding: 37px var(--edge) 20px; --warning: var(--blue-500); --warning-soft: #60A5FA; } /* --warning-soft: unused as of migration */
 .risk-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--warning); font-weight: 500; margin-bottom: 16px; text-align: center; }
 .risk-title { font-size: 42px; line-height: 1.2; letter-spacing: -1.6px; font-weight: 800; margin: 0 auto 12px; color: var(--text); text-align: center; max-width: 1080px; }
 .risk-sub { font-size: 20px; line-height: 1.45; color: var(--text-soft); text-align: center; max-width: 860px; margin: 0 auto 36px; }
@@ -155,7 +161,18 @@
 /* ---- WCAG explainer section ---- */
 .wcag-section { padding: 50px var(--edge) 64px; }
 .section-eyebrow { font-size: 11px; letter-spacing: 3px; color: var(--brand); font-weight: 500; margin-bottom: 16px; text-align: center; }
-.site h2 { font-size: 36px; line-height: 1.1; letter-spacing: -1px; font-weight: 800; margin: 0 0 14px; color: var(--text); text-align: center; } /* was bare "h2" in index.html's own <style> (safe there since it was the only stylesheet on that page); re-prefixed with .site because the real build concatenates home.css with pages.css, and a bare h2 rule here would otherwise bleed onto careers.html's unrelated, unstyled <h2> elements */
+/* Section-heading default.
+ *
+ * Wrapped in :where() so it carries ZERO specificity. Written as `.site h2` it
+ * scored 0,1,1 and silently outranked every single-class heading rule —
+ * `.hero-title` and `.audit-title` were both losing to it, so the hero rendered
+ * centred at 36px instead of left-aligned at 48px. A default must never beat the
+ * component that opts out of it.
+ *
+ * Scoped to .site (rather than a bare h2) because the build concatenates
+ * home.css with pages.css into one bundle, and a bare rule would bleed onto the
+ * secondary pages' headings. */
+:where(.site h2) { font-size: 36px; line-height: 1.1; letter-spacing: -1px; font-weight: 800; margin: 0 0 14px; color: var(--text); text-align: center; }
 .section-sub { font-size: 20px; color: var(--text-soft); text-align: center; max-width: 760px; margin: 0 auto 36px; line-height: 1.45; text-wrap: pretty; }
 .wcag-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
 .wcag-lede { font-size: 16px; line-height: 1.55; color: var(--text-soft); margin: 0 0 24px; text-wrap: pretty; }
@@ -258,7 +275,12 @@
 .price-monthly .ann { color: var(--text-faint); white-space: nowrap; } /* TODO(contrast): verify against WCAG 1.4.3 */
 
 /* === LAWSUIT RESPONSE — distinct urgent full-width lane === */
-.lawsuit { padding: 8px var(--edge) 48px; --danger: #F87171; --danger-strong: #EF4444; } /* unused as of migration — no descendant rule below references var(--danger) or var(--danger-strong); this local pair also shadows the global --danger token (#DC2626, promoted in tokens.css) within .lawsuit's scope */
+/* The local `--danger: #F87171` override that used to live here was NOT unused:
+ * .lawsuit-eyebrow and .lawsuit-cta both read var(--danger), so white text was
+ * being placed on a pale red at about 2.2:1 — a WCAG 1.4.3 failure caught by our
+ * own axe self-audit. Removing the override lets the global --danger (#DC2626,
+ * ~5.4:1 against white) apply. */
+.lawsuit { padding: 8px var(--edge) 48px; }
 .lawsuit-band { position: relative; background: #0C1026; border: 2px solid rgba(255,210,63,0.65); border-radius: 14px; padding: 32px 34px 30px 52px; overflow: hidden; box-shadow: 0 20px 55px -22px rgba(255, 210, 63, 0.45); }
 .lawsuit-top { position: relative; display: grid; grid-template-columns: 1fr auto; gap: 28px 44px; align-items: start; margin-bottom: 26px; }
 .lawsuit-head { max-width: 810px; }
@@ -336,7 +358,7 @@
   .nav-right { flex-wrap: wrap; gap: 12px 18px; }
   .hero-title { font-size: 34px; }
   .risk-title { font-size: 30px; }
-  .site h2 { font-size: 26px; }
+  :where(.site h2) { font-size: 26px; }
   .hero-title br, .risk-title br { display: none; }
   .section-sub, .risk-sub { font-size: 17px; }
   .stats-strip { grid-template-columns: 1fr; gap: 22px; }

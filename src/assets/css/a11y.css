@@ -1,0 +1,73 @@
+/*
+ * a11y.css — accessibility guarantees.
+ *
+ * Loaded LAST in the bundle, on purpose.
+ *
+ * These rules are not styling preferences; they are conformance requirements
+ * that the site is contractually and commercially sold on. Placing them at the
+ * end means a component rule cannot quietly undo one. That is not hypothetical:
+ * the underline rule below originally lived in base.css and was silently
+ * overridden by an equally-specific `.doc a { text-decoration: none }` later in
+ * the cascade, and our own axe self-audit failed on 11 pages as a result.
+ *
+ * Anything added here should be justified by a WCAG success criterion.
+ */
+
+/* ---------------------------------------------------- 1.4.1 Use of Colour ---
+ * An inline link inside running text must be distinguishable from the text
+ * around it without relying on colour alone — for readers with a colour vision
+ * deficiency, and for anyone reading in greyscale. axe reports violations of
+ * this as `link-in-text-block`.
+ *
+ * `a:not([class])` selects exactly the plain prose links. Every button-styled or
+ * component link on the site carries a class and keeps its own treatment. */
+:where(p, li, dd, dt, blockquote, figcaption, cite, td, th) a:not([class]) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+:where(p, li, dd, dt, blockquote, figcaption, cite, td, th) a:not([class]):hover,
+:where(p, li, dd, dt, blockquote, figcaption, cite, td, th) a:not([class]):focus-visible {
+  text-decoration-thickness: 2px;
+}
+
+/* ------------------------------------------------------ 2.4.7 Focus Visible ---
+ * Every interactive element must show a focus indicator that is visible against
+ * the dark background. Declared here so no component can remove it. */
+:is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--brand);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* --------------------------------------------- 2.5.8 Target Size (Minimum) ---
+ * WCAG 2.2 requires interactive targets to be at least 24x24 CSS pixels unless
+ * they have sufficient spacing. Applied to the controls most at risk: small
+ * icon buttons and inline nav links. */
+.nav-toggle, .modal-close {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+/* --------------------------------------------------- 1.4.12 Text Spacing ---
+ * Content must not be lost when a reader overrides spacing. Avoiding fixed
+ * heights on text containers is the practical requirement; this guards the
+ * containers most likely to clip. */
+.audit-row, .criteria-row, .price-features li, .footer-list li {
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
+/* ------------------------------------------- 2.3.3 / prefers-reduced-motion ---
+ * A final, unconditional stop for motion when the reader has asked for less.
+ * Components declare their own reduced-motion handling; this catches anything
+ * that forgets to. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

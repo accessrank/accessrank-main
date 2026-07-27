@@ -28,7 +28,15 @@ body {
    (4 blobs, position:fixed). Per migration spec: keep the 8-blob layout,
    switch to position:fixed. Selectors are unprefixed (no ".site"/".page"
    ancestor) so the same rule serves every page. */
-.aurora { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; } /* was: position: absolute; z-index: -1; in index.html — z-index kept from index.html; auth.css used z-index: -2 */
+/* Absolute, not fixed.
+ *
+ * The blob offsets (top: 8% .. 88%) are percentages of this element's height.
+ * Fixed positioning makes that the VIEWPORT, so all eight blobs stack into one
+ * screen and blur into a flat wash that buries the dark navy the brand depends
+ * on. Absolute makes it the document, which is what spreads them down the page
+ * as the design intends. */
+body { position: relative; overflow-x: hidden; }
+.aurora { position: absolute; inset: 0; height: 100%; z-index: -1; overflow: hidden; pointer-events: none; }
 .aurora span { position: absolute; border-radius: 50%; filter: blur(80px) saturate(1.1); opacity: var(--aurora-opacity, 0.62); will-change: transform; } /* was: filter: blur(90px) saturate(1.1); opacity: 0.36; in auth.css */
 .aurora .b1 { width: 58%; padding-bottom: 58%; top: 8%; left: -10%; background: var(--blue-600); animation: auroraDrift1 30s ease-in-out infinite; }
 .aurora .b2 { width: 64%; padding-bottom: 64%; top: 32%; right: -16%; background: var(--blue-500); animation: auroraDrift2 37s ease-in-out infinite; }

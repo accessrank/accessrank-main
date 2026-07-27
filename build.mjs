@@ -4,6 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { render as renderTemplate } from './server/lib/template.js';
+import { minifyCss } from './server/lib/minify.js';
 
 /**
  * Static site build.
@@ -56,15 +57,6 @@ function bundle(files, baseDir) {
     .join('\n\n');
 }
 
-/** Conservative CSS minifier: safe for hand-written CSS, no parser needed. */
-function minifyCss(css) {
-  return css
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/\s+/g, ' ')
-    .replace(/\s*([{}:;,>~+])\s*/g, '$1')
-    .replace(/;}/g, '}')
-    .trim();
-}
 
 function copyDir(from, to) {
   if (!fs.existsSync(from)) return 0;
@@ -154,8 +146,10 @@ function build() {
   const cssDir = path.join(SRC, 'assets', 'css');
   const jsDir = path.join(SRC, 'assets', 'js');
 
+  // Order is the cascade. a11y.css is deliberately last so a component rule
+  // cannot silently override a conformance requirement.
   const cssSource = bundle(
-    ['tokens.css', 'fonts.css', 'base.css', 'layout.css', 'home.css', 'pages.css'],
+    ['tokens.css', 'fonts.css', 'base.css', 'layout.css', 'home.css', 'pages.css', 'a11y.css'],
     cssDir,
   );
   const css = minifyCss(cssSource);

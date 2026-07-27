@@ -93,6 +93,8 @@ const config = Object.freeze({
     scansPerIpPerDay: int(env.LIMIT_SCANS_PER_IP_PER_DAY, 8),
     /** Burst protection, independent of the daily quotas. */
     scanBurstPerMinute: int(env.LIMIT_SCAN_BURST_PER_MIN, 3),
+    reportBurstPerMinute: int(env.LIMIT_REPORT_BURST_PER_MIN, 5),
+    apiBurstPerMinute: int(env.LIMIT_API_BURST_PER_MIN, 60),
   },
 
   security: {

@@ -195,11 +195,14 @@ router.post('/report', wrap(async (req, res) => {
   const ip = clientIp(req);
   const ipHash = hashIp(ip);
 
-  // Silent success for bots: revealing the trap just teaches the next attempt.
-  if (honeypotTripped(input) || submittedTooFast(input)) {
-    log.warn('report request rejected by bot trap', { ipHash });
+  // The honeypot gates: a filled hidden field means automation, and revealing
+  // the trap would only teach the next attempt. Timing does NOT gate — see
+  // submittedTooFast — because autofill would cost us real leads silently.
+  if (honeypotTripped(input)) {
+    log.warn('report request rejected by honeypot', { ipHash });
     return res.json({ ok: true, status: 'sent' });
   }
+  if (submittedTooFast(input)) log.warn('report submitted suspiciously fast', { ipHash });
 
   await verifyTurnstile(input.turnstileToken, ip);
 
@@ -277,10 +280,11 @@ router.post('/lead', wrap(async (req, res) => {
   const store = await getStore();
   const ipHash = hashIp(clientIp(req));
 
-  if (honeypotTripped(input) || submittedTooFast(input)) {
-    log.warn('lead request rejected by bot trap', { ipHash });
+  if (honeypotTripped(input)) {
+    log.warn('lead request rejected by honeypot', { ipHash });
     return res.json({ ok: true, status: 'received' });
   }
+  if (submittedTooFast(input)) log.warn('lead submitted suspiciously fast', { ipHash });
 
   await verifyTurnstile(input.turnstileToken, clientIp(req));
 

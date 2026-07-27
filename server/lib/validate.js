@@ -103,12 +103,25 @@ export function honeypotTripped(payload) {
   return typeof value === 'string' && value.trim().length > 0;
 }
 
+/**
+ * Suspiciously fast submission.
+ *
+ * IMPORTANT: this is a SIGNAL, not a gate. Callers must not silently drop a
+ * submission because of it.
+ *
+ * A password manager or browser autofill can legitimately complete a three-field
+ * form in well under two seconds, and the failure mode of blocking is the worst
+ * one available: the visitor is shown success, no report is sent, and a real
+ * lead is lost with no error anywhere. The honeypot has effectively no false
+ * positives and does gate; Turnstile is the actual bot defence in production.
+ * This only earns a log line.
+ */
 export function submittedTooFast(payload) {
   const raw = payload?.formLoadedAt;
   if (raw == null || raw === '') return false;
   const loadedAt = Number(raw);
   if (!Number.isFinite(loadedAt) || loadedAt <= 0) return false;
-  // Clock skew or a stale tab should never block a real person.
+  // Clock skew or a stale tab should never flag a real person.
   const elapsedSeconds = (Date.now() - loadedAt) / 1000;
   if (elapsedSeconds < 0 || elapsedSeconds > 86_400) return false;
   return elapsedSeconds < MIN_FORM_SECONDS;

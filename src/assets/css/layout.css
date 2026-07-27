@@ -84,3 +84,105 @@
 a.submit-btn, a.submit-btn:hover, a.submit-btn:visited { color: var(--brand-ink); }
 .submit-btn:hover { filter: brightness(1.04); transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(var(--brand-rgb), 0.7); }
 .submit-btn:active { transform: translateY(0); }
+
+/* ---------------------------------------------------------------------------
+ * Additions made during the migration (not present in either legacy source).
+ * ------------------------------------------------------------------------- */
+
+/* The hero's secondary CTA was a dead <button> in the original and is now a
+ * real link, but no ghost-button style existed to give it. */
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 22px; border-radius: 8px;
+  font-weight: 500; font-size: 13px;
+  color: var(--text); background: transparent;
+  border: 1px solid var(--hairline-strong);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.btn-ghost:hover { border-color: var(--brand-border); background: var(--brand-soft); }
+
+/* Semantic lists used as layout containers.
+ *
+ * These were <div> grids in the original. They are real <ul>/<ol> now so screen
+ * readers announce "list, 4 items", but that brings the browser's default
+ * bullets and 40px inline padding with it. */
+.risk-grid, .pour, .feature-grid, .stats-strip-inner, .pricing-grid,
+.criteria-list, .lawsuit-steps, .price-features, .footer-list,
+.marquee-track, .nav-right ul, .job-list, .perks {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+}
+
+/* Mobile navigation toggle. The original site had no mobile menu at all. */
+.nav-toggle { display: none; }
+@media (max-width: 860px) {
+  .nav-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; border-radius: 8px;
+    background: transparent; border: 1px solid var(--hairline);
+    color: var(--text); cursor: pointer;
+  }
+  .nav-toggle-bars { display: grid; gap: 4px; }
+  .nav-toggle-bars span { display: block; width: 18px; height: 2px; background: currentColor; border-radius: 2px; }
+
+  .site-nav .nav-right, .nav .nav-right {
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 4px;
+    padding: 12px var(--edge) 18px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--hairline);
+    display: none;
+  }
+  .site-nav .nav-right.is-open, .nav .nav-right.is-open { display: flex; }
+  .site-nav { position: relative; }
+  .nav-right .nav-link { padding: 12px 4px; }
+  .nav-right .cta-nav { text-align: center; margin-top: 6px; }
+}
+
+/* Modal dialog for report lead capture. */
+.modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  padding: 20px;
+  background: rgba(6, 8, 20, 0.72);
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+}
+.modal[hidden] { display: none; }
+.modal-panel {
+  position: relative; width: 100%; max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  padding: 30px 28px 26px;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7);
+}
+.modal-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 36px; height: 36px; border-radius: 8px;
+  background: transparent; border: 0; color: var(--text-muted);
+  font-size: 22px; line-height: 1; cursor: pointer;
+}
+.modal-close:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); }
+.modal-title { font-size: 22px; font-weight: 700; letter-spacing: -0.6px; margin: 0 0 8px; color: var(--text); text-align: left; }
+.modal-sub { font-size: 14px; line-height: 1.55; color: var(--text-soft); margin: 0 0 20px; }
+.modal-note { font-size: 12px; color: var(--text-muted); margin: 14px 0 0; text-align: center; }
+.modal-success { text-align: center; }
+.success-mark {
+  display: inline-grid; place-items: center;
+  width: 52px; height: 52px; margin: 0 auto 16px;
+  border-radius: 50%; background: var(--brand-soft); color: var(--brand);
+}
+.modal-success .modal-title { text-align: center; }
+.modal-success .modal-sub { text-align: center; }
+body.modal-open { overflow: hidden; }
+
+/* Honeypot: removed from the accessibility tree and from view, but still a real
+ * focusable-free field a naive bot will happily fill in. */
+.hp-field {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%);
+  white-space: nowrap;
+}
