@@ -3,6 +3,11 @@
 Marketing site and live accessibility audit service for a WCAG 2.2 AA remediation
 business selling to DTC ecommerce brands.
 
+> **Picking this up cold?** Read [`docs/HANDOFF.md`](docs/HANDOFF.md) first. It
+> covers why the design decisions are what they are, and documents six bugs that
+> produced no error message at all — including one that silently disabled the
+> per-IP quota for every IPv6 visitor while all the tests stayed green.
+
 One Node process serves the static marketing site **and** the audit API. One
 `docker run` gives you the whole product.
 
