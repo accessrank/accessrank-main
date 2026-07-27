@@ -1,0 +1,56 @@
+app = "accessrank"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+
+  [build.args]
+    # Baked into canonical URLs and the sitemap at build time.
+    SITE_URL = "https://accessrank.ai"
+    # Public key, safe to commit. Set to your real Turnstile site key.
+    TURNSTILE_SITE_KEY = ""
+    PLAUSIBLE_DOMAIN = ""
+
+[env]
+  NODE_ENV = "production"
+  PORT = "3000"
+  SITE_URL = "https://accessrank.ai"
+  # Fly puts exactly one proxy hop in front of the app.
+  TRUST_PROXY = "1"
+  SCAN_CONCURRENCY = "2"
+  SCAN_MAX_PAGES = "3"
+  LIMIT_REPORTS_PER_EMAIL = "1"
+  LIMIT_REPORTS_PER_IP_PER_DAY = "3"
+  LIMIT_SCANS_PER_IP_PER_DAY = "8"
+
+# Secrets are NOT set here. Use:
+#   fly secrets set DATABASE_URL=... RESEND_API_KEY=... IP_HASH_SALT=... \
+#                   TURNSTILE_SECRET_KEY=... ADMIN_TOKEN=...
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = "suspend"
+  auto_start_machines = true
+  # Chromium takes a few seconds to warm; keeping one machine resident avoids
+  # a cold-start on the first visitor's scan.
+  min_machines_running = 1
+
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 40
+    hard_limit = 80
+
+[[http_service.checks]]
+  interval = "30s"
+  timeout = "5s"
+  grace_period = "25s"
+  method = "GET"
+  path = "/api/health"
+
+[[vm]]
+  size = "shared-cpu-2x"
+  # Chromium is memory-hungry: 512MB will OOM-kill mid-scan under any real load.
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 2

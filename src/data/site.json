@@ -1,0 +1,265 @@
+{
+  "name": "Accessrank",
+  "tagline": "Rank is in our name for a reason",
+  "description": "Accessrank raises your ADA/WCAG 2.2 AA score with real source-code remediation, keeps predatory lawyers away, and lifts your SEO and AI rankings.",
+  "email": "info@accessrank.ai",
+  "reportFrom": "reports@accessrank.ai",
+  "legalName": "Accessrank",
+  "foundingYear": 2025,
+  "locale": "en",
+
+  "nav": [
+    { "label": "How it works", "href": "/#product" },
+    { "label": "WCAG explained", "href": "/#wcag" },
+    { "label": "Pricing", "href": "/#pricing" },
+    { "label": "Free audit", "href": "/#audit", "cta": true }
+  ],
+
+  "footer": [
+    {
+      "heading": "Company",
+      "links": [
+        { "label": "About", "href": "/about" },
+        { "label": "How we score", "href": "/methodology" },
+        { "label": "Careers", "href": "/careers" },
+        { "label": "Talk to sales", "href": "/contact-sales" }
+      ]
+    },
+    {
+      "heading": "Learn",
+      "links": [
+        { "label": "WCAG 2.2 explained", "href": "/#wcag" },
+        { "label": "ADA & EAA guide", "href": "/guide/ada-eaa" },
+        { "label": "Resources", "href": "/resources" }
+      ]
+    },
+    {
+      "heading": "Legal",
+      "links": [
+        { "label": "Privacy", "href": "/privacy" },
+        { "label": "Terms", "href": "/terms" },
+        { "label": "Disclosure", "href": "/disclosure" }
+      ]
+    }
+  ],
+
+  "pages": [
+    {
+      "file": "index.html",
+      "url": "/",
+      "layout": "home",
+      "title": "Accessrank — Raise your ADA accessibility score & SEO for DTC ecommerce",
+      "description": "A low ecommerce accessibility score is a lawsuit waiting to happen. Accessrank raises your ADA/WCAG 2.2 AA score with real code fixes, and lifts your SEO at the same time.",
+      "priority": "1.0",
+      "changefreq": "weekly",
+      "schema": ["Organization", "Service", "FAQPage"],
+      "faq": [
+        {
+          "q": "Is an accessibility overlay enough?",
+          "a": "No. Overlay widgets sit on top of your existing code without fixing it, and courts and regulators increasingly treat them as a red flag rather than a defense — 25% of accessibility lawsuits in 2024 involved sites running an overlay, and the FTC fined accessiBe $1 million in 2025 for misleading accessibility claims. Accessrank remediates the underlying HTML, CSS and ARIA in your theme instead of masking it with a script."
+        },
+        {
+          "q": "How long does remediation take?",
+          "a": "Most stores are live with a raised score in 2–4 weeks, depending on catalog size and how much custom code your theme carries. If you've already been served a demand letter or lawsuit, our express lane targets the cited and critical-path issues in about 7 days."
+        },
+        {
+          "q": "Will this actually help my SEO?",
+          "a": "The same fixes that raise your accessibility score — alt text, heading structure, semantic HTML, ARIA labeling — are structural signals search engines read too. In a Semrush study of 847 sites, 73% saw organic-traffic growth after remediation (avg. +12%), and a larger 2025 Semrush study of 10,000 sites found higher-accessibility-score sites averaged 23% more organic traffic and 27% more ranking keywords. These results are correlational, not causal, and individual results vary."
+        },
+        {
+          "q": "What is WCAG 2.2 Level AA?",
+          "a": "WCAG 2.2 is the W3C's web accessibility standard: 86 success criteria organized under four principles — Perceivable, Operable, Understandable, Robust (POUR). Level AA is the middle of three conformance levels and is the target referenced by ADA guidance, the European Accessibility Act, and Section 508. Level A alone isn't enough, and Level AAA is aspirational and largely unachievable for ecommerce content."
+        },
+        {
+          "q": "Does the free check prove I am compliant?",
+          "a": "No, and be wary of any tool that claims it does. Automated testing — including our free check — catches roughly a third to a half of accessibility barriers. It's a fast way to surface obvious issues, but full WCAG conformance also requires manual testing with a keyboard and a screen reader, which is what our paid audits and remediation include."
+        },
+        {
+          "q": "What if I have already received a demand letter?",
+          "a": "Talk to us right away. Our lawsuit-response engagement starts at $5,900, moves in about 7 days, and covers an emergency audit of the cited and critical-path barriers, source-code remediation of the complaint items, a screen-reader proof video, VPAT and conformance documentation, and a settlement-terms review. Accessrank is not a law firm and does not provide legal representation or advice — this runs alongside your attorney, not instead of one."
+        }
+      ]
+    },
+    {
+      "file": "about.html",
+      "url": "/about",
+      "layout": "page",
+      "title": "About Accessrank — accessibility engineers, not overlay vendors",
+      "description": "Who we are, why we fix source code instead of installing an overlay widget, and how we think about accessibility, risk and search.",
+      "priority": "0.6",
+      "changefreq": "monthly"
+    },
+    {
+      "file": "methodology.html",
+      "url": "/methodology",
+      "layout": "page",
+      "title": "How we score your site — Accessrank audit methodology",
+      "description": "The exact scoring model behind your Accessrank report: axe-core rules, WCAG conformance weighting, and the on-page SEO checklist. No black box.",
+      "priority": "0.7",
+      "changefreq": "monthly"
+    },
+    {
+      "file": "guide-ada-eaa.html",
+      "url": "/guide/ada-eaa",
+      "layout": "page",
+      "title": "ADA & European Accessibility Act — the ecommerce guide",
+      "description": "What the ADA, Section 508 and the European Accessibility Act actually require of an online store, what the deadlines are, and what happens if you miss them.",
+      "priority": "0.8",
+      "changefreq": "monthly"
+    },
+    {
+      "file": "resources.html",
+      "url": "/resources",
+      "layout": "page",
+      "title": "Accessibility & SEO resources for DTC ecommerce — Accessrank",
+      "description": "Plain-English explainers on WCAG 2.2 AA, ADA and EAA compliance, accessibility scoring, and how accessibility work affects organic search.",
+      "priority": "0.6",
+      "changefreq": "weekly"
+    },
+    {
+      "file": "careers.html",
+      "url": "/careers",
+      "layout": "page",
+      "title": "Careers at Accessrank — make ecommerce work for everyone",
+      "description": "Open roles at Accessrank. Remote-first across the US and EU, building accessibility remediation that actually ships.",
+      "priority": "0.5",
+      "changefreq": "weekly"
+    },
+    {
+      "file": "signup.html",
+      "url": "/signup",
+      "layout": "page",
+      "title": "Start with Accessrank — get your remediation plan",
+      "description": "Tell us about your store and we will come back with a fixed-scope remediation plan and timeline.",
+      "priority": "0.8",
+      "changefreq": "monthly",
+      "noindex": false
+    },
+    {
+      "file": "contact-sales.html",
+      "url": "/contact-sales",
+      "layout": "page",
+      "title": "Talk to Accessrank sales — Shopify Plus & multi-brand",
+      "description": "Built for Shopify Plus and multi-brand catalogues. Most teams hear back within one business day.",
+      "priority": "0.7",
+      "changefreq": "monthly"
+    },
+    {
+      "file": "privacy.html",
+      "url": "/privacy",
+      "layout": "doc",
+      "title": "Privacy Policy — Accessrank",
+      "description": "How Accessrank collects, uses and retains personal data, including data from the free accessibility audit.",
+      "priority": "0.3",
+      "changefreq": "yearly"
+    },
+    {
+      "file": "terms.html",
+      "url": "/terms",
+      "layout": "doc",
+      "title": "Terms of Service — Accessrank",
+      "description": "The terms governing use of the Accessrank website, the free audit tool, and Accessrank remediation engagements.",
+      "priority": "0.3",
+      "changefreq": "yearly"
+    },
+    {
+      "file": "disclosure.html",
+      "url": "/disclosure",
+      "layout": "doc",
+      "title": "Disclosure — Accessrank",
+      "description": "Important disclosures about litigation risk, results claims, tax credit guidance and WCAG conformance.",
+      "priority": "0.3",
+      "changefreq": "yearly"
+    },
+    {
+      "file": "404.html",
+      "url": "/404",
+      "layout": "page",
+      "title": "Page not found — Accessrank",
+      "description": "That page does not exist.",
+      "noindex": true,
+      "excludeFromSitemap": true
+    }
+  ],
+
+  "jobs": [
+    {
+      "slug": "senior-accessibility-engineer",
+      "title": "Senior Accessibility Engineer",
+      "team": "Engineering",
+      "location": "Remote — US / EU",
+      "type": "Full-time",
+      "summary": "Lead remediation work on real storefronts: audit against WCAG 2.2 AA, write the patches, and prove the fix with automated and assistive-technology testing.",
+      "responsibilities": [
+        "Audit Shopify, WooCommerce and custom storefronts against WCAG 2.2 AA",
+        "Write and ship remediation patches in Liquid, React and vanilla JS",
+        "Verify fixes with screen readers (NVDA, VoiceOver) and keyboard-only testing",
+        "Set up regression monitoring so a theme update cannot undo the work",
+        "Write the plain-English findings our customers actually read"
+      ],
+      "requirements": [
+        "4+ years front-end engineering with deep HTML and ARIA knowledge",
+        "Hands-on WCAG 2.1 / 2.2 AA remediation experience, not just auditing",
+        "Fluency with axe-core, screen readers, and keyboard-only navigation",
+        "Comfortable working directly in a customer's production theme"
+      ]
+    },
+    {
+      "slug": "remediation-specialist",
+      "title": "Remediation Specialist",
+      "team": "Delivery",
+      "location": "Remote — US / EU",
+      "type": "Full-time",
+      "summary": "Turn audit findings into shipped fixes at volume, with an eye for the pattern behind a hundred individual failures.",
+      "responsibilities": [
+        "Work through prioritised audit backlogs on customer storefronts",
+        "Fix contrast, alt text, form labelling and focus-order failures at the template level",
+        "Escalate the architectural problems that a template fix cannot solve",
+        "Keep remediation notes accurate enough to stand up in a legal response"
+      ],
+      "requirements": [
+        "2+ years front-end or theme development experience",
+        "Working knowledge of WCAG success criteria and how to test them",
+        "Precision and patience — most of this work is detail at scale"
+      ]
+    },
+    {
+      "slug": "product-designer",
+      "title": "Product Designer",
+      "team": "Product",
+      "location": "Remote — US / EU",
+      "type": "Full-time",
+      "summary": "Design an accessibility product that is itself exemplary. Everything you ship gets audited by the same standard we sell.",
+      "responsibilities": [
+        "Design the audit, reporting and monitoring surfaces end to end",
+        "Own the design system, including its contrast and focus behaviour",
+        "Prototype with real assistive technology in the loop",
+        "Make complex compliance information legible to non-technical buyers"
+      ],
+      "requirements": [
+        "4+ years product design, ideally on data-dense B2B products",
+        "Genuine accessibility fluency — you design for keyboard and screen reader first",
+        "Comfortable working in code or very close to it"
+      ]
+    },
+    {
+      "slug": "customer-success-manager",
+      "title": "Customer Success Manager",
+      "team": "Customer",
+      "location": "Remote — US",
+      "type": "Full-time",
+      "summary": "Own the relationship from signed contract through remediation, monitoring and renewal — including the customers who arrive holding a demand letter.",
+      "responsibilities": [
+        "Run onboarding and scoping calls with DTC brands",
+        "Translate technical findings into business risk and next steps",
+        "Coordinate urgent lawsuit-response engagements across the team",
+        "Own retention, expansion and reference relationships"
+      ],
+      "requirements": [
+        "3+ years customer success or account management in B2B SaaS or services",
+        "Able to hold a credible technical conversation about accessibility",
+        "Calm under pressure — some of these conversations start badly"
+      ]
+    }
+  ]
+}

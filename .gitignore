@@ -1,0 +1,26 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+coverage/
+tmp/
+*.pdf
+!server/templates/*.pdf
+test-results/
+playwright-report/
+
+# Scratch artifacts from local visual checks — never belong in the repo.
+slices/
+shot-*.png
+pdfshot-*.png
+result-panel.png
+modal-errors.png
+report-preview.*
+scripts/_*.mjs

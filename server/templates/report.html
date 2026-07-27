@@ -1,0 +1,1248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="generator" content="Accessrank audit engine">
+<meta name="color-scheme" content="light">
+<title>Accessibility &amp; SEO Report — {{ site.title }}</title>
+<style>
+
+  /* ======================================================================
+     RESET
+     ====================================================================== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  /* No CSS animation or transition anywhere in this document — print engines
+     can rasterise a mid-transition frame, so we remove the possibility
+     entirely rather than trust that nothing below ever adds one. */
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+
+  /* ======================================================================
+     TOKENS
+     ====================================================================== */
+  :root {
+    color-scheme: light;
+
+    --ink:        #14142A;
+    --ink-rgb:    20, 20, 42;
+    --muted:      #4B4B63;
+    --paper:      #FFFFFF;
+    --panel:      #F7F6F2;
+    --line:       #DFDED6;
+    --line-strong:#C7C6BC;
+
+    --amber:      #FFD23F;
+    --amber-rgb:  255, 210, 63;
+    --amber-ink:  #6B4E00; /* amber darkened for the rare case it sits on text */
+
+    --critical:      #B91C1C;
+    --critical-rgb:  185, 28, 28;
+    --serious:       #DC2626;
+    --serious-rgb:   220, 38, 38;
+    --moderate:      #B45309;
+    --moderate-rgb:  180, 83, 9;
+    --minor:         #6B7280;
+    --minor-rgb:     107, 114, 128;
+    --pass:          #15803D;
+    --pass-rgb:      21, 128, 61;
+
+    /* Score-band tones. "ok" and "neutral" are not part of the four
+       documented bands but are supported defensively: scoring.js can emit
+       tone "neutral" when a page has nothing to evaluate (score === null). */
+    --tone-bad:     var(--critical);
+    --tone-bad-rgb: var(--critical-rgb);
+    --tone-warn:      var(--moderate);
+    --tone-warn-rgb:  var(--moderate-rgb);
+    --tone-ok:        #155E75;
+    --tone-ok-rgb:    21, 94, 117;
+    --tone-good:      var(--pass);
+    --tone-good-rgb:  var(--pass-rgb);
+    --tone-neutral:     #55556B;
+    --tone-neutral-rgb: 85, 85, 107;
+  }
+
+  /* ======================================================================
+     PAGE SETUP — the whole PDF geometry lives here
+     ====================================================================== */
+  @page {
+    size: A4;
+    margin: 18mm 16mm;
+  }
+
+  html, body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  html {
+    font-size: 10.5pt;
+  }
+
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 10.5pt;
+    line-height: 1.55;
+    color: var(--ink);
+    background: var(--paper);
+    font-variant-ligatures: none;
+  }
+
+  /* Never let a heading be the last thing on a page. */
+  h1, h2, h3 {
+    break-after: avoid;
+    page-break-after: avoid;
+  }
+
+  h1, h2, h3, h4 {
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+
+  p { orphans: 3; widows: 3; }
+
+  a {
+    color: var(--ink);
+    text-decoration: underline;
+    text-decoration-color: var(--line-strong);
+    text-underline-offset: 2pt;
+  }
+
+  ul, ol { list-style: none; }
+
+  table { border-collapse: collapse; width: 100%; }
+
+  /* Table headers repeat on every printed page a table spans. */
+  thead { display: table-header-group; }
+  tfoot { display: table-footer-group; }
+
+  tr {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Long code / URLs must wrap inside their box, never overflow the page. */
+  pre, code, .mono {
+    font-family: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, "Courier New", monospace;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .overflow-safe {
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  /* ======================================================================
+     LAYOUT PRIMITIVES
+     ====================================================================== */
+
+  /* Every top-level section after the cover starts on its own page. */
+  .section {
+    break-before: page;
+    page-break-before: always;
+  }
+
+  .section > h2 {
+    font-size: 17pt;
+    margin-bottom: 3mm;
+  }
+
+  .section-kicker {
+    width: 9mm;
+    height: 3pt;
+    background: var(--amber);
+    border-radius: 2pt;
+    margin-bottom: 3mm;
+  }
+
+  .section-intro {
+    color: var(--muted);
+    font-size: 10pt;
+    max-width: 145mm;
+    margin-bottom: 6mm;
+  }
+
+  .section-intro + .section-intro { margin-top: -3mm; }
+
+  h3 {
+    font-size: 12.5pt;
+    margin-bottom: 2mm;
+  }
+
+  .empty-note {
+    border: 0.75pt dashed var(--line-strong);
+    border-radius: 3pt;
+    padding: 6mm;
+    color: var(--muted);
+    font-size: 10pt;
+    background: var(--panel);
+  }
+
+  /* ======================================================================
+     BRAND MARK (used on the cover)
+     ====================================================================== */
+  .brand-mark { display: block; }
+
+  /* ======================================================================
+     COVER PAGE
+     ====================================================================== */
+  .cover {
+    break-before: avoid;
+    page-break-before: avoid;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 253mm;
+  }
+
+  .cover-brand {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+  }
+
+  .cover-brand .brand-word {
+    font-size: 14pt;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+
+  .cover-mid {
+    margin: 18mm 0;
+  }
+
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 2.5mm;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: var(--muted);
+    margin-bottom: 6mm;
+  }
+
+  .eyebrow::before {
+    content: "";
+    display: inline-block;
+    width: 6pt;
+    height: 6pt;
+    border-radius: 1.5pt;
+    background: var(--amber);
+    flex: none;
+  }
+
+  .cover-title {
+    font-size: 30pt;
+    line-height: 1.15;
+    max-width: 150mm;
+    margin-bottom: 4mm;
+  }
+
+  .cover-url {
+    font-size: 12.5pt;
+    color: var(--muted);
+    font-family: ui-monospace, "Cascadia Mono", "SFMono-Regular", Consolas, "Courier New", monospace;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    margin-bottom: 14mm;
+  }
+
+  .cover-score {
+    display: flex;
+    align-items: center;
+    gap: 8mm;
+  }
+
+  .score-ring {
+    flex: none;
+    width: 42mm;
+    height: 42mm;
+    border-radius: 50%;
+    border: 3.2pt solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--paper);
+  }
+
+  .score-ring-num {
+    font-size: 27pt;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+
+  .score-ring-max {
+    font-size: 8pt;
+    color: var(--muted);
+    margin-top: 1mm;
+  }
+
+  .band-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 2.5mm 5mm;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12pt;
+    border: 1pt solid;
+  }
+
+  .cover-meta {
+    border-top: 0.75pt solid var(--line);
+    padding-top: 6mm;
+  }
+
+  .cover-meta-row {
+    display: flex;
+    gap: 12mm;
+    margin-bottom: 5mm;
+    flex-wrap: wrap;
+  }
+
+  .meta-label {
+    display: block;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 7.5pt;
+    color: var(--muted);
+    margin-bottom: 1mm;
+  }
+
+  .meta-value {
+    display: block;
+    font-size: 11pt;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .cover-disclaimer-hint {
+    font-size: 8.5pt;
+    color: var(--muted);
+    max-width: 150mm;
+  }
+
+  /* ======================================================================
+     SCORE CARDS ("At a glance")
+     ====================================================================== */
+  .score-cards {
+    display: flex;
+    gap: 6mm;
+    margin-bottom: 10mm;
+  }
+
+  .score-card {
+    flex: 1 1 0;
+    border: 0.75pt solid var(--line);
+    border-radius: 3pt;
+    background: var(--panel);
+    padding: 6mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .score-card-label {
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    font-weight: 700;
+    margin-bottom: 3mm;
+  }
+
+  .score-card-num {
+    font-size: 26pt;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 4mm;
+  }
+
+  .score-card-band {
+    display: inline-block;
+    font-size: 8.5pt;
+    font-weight: 700;
+    padding: 1mm 3mm;
+    border-radius: 999px;
+    border: 1pt solid;
+    margin-bottom: 4mm;
+  }
+
+  .meter {
+    height: 5pt;
+    border-radius: 999px;
+    background: var(--panel);
+    border: 0.5pt solid var(--line-strong);
+    overflow: hidden;
+  }
+
+  .meter-fill {
+    height: 100%;
+    border-radius: 999px;
+    background: var(--ink);
+  }
+
+  .score-card--overall .meter-fill { background: currentColor; }
+
+  /* ======================================================================
+     SEVERITY BREAKDOWN
+     ====================================================================== */
+  .severity-grid {
+    display: flex;
+    gap: 5mm;
+  }
+
+  .sev-tile {
+    flex: 1 1 0;
+    border: 0.75pt solid var(--line);
+    border-top: 2.5pt solid var(--tile-color, var(--minor));
+    border-radius: 2pt;
+    background: var(--paper);
+    padding: 5mm 4mm;
+    text-align: center;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .sev-tile--critical { --tile-color: var(--critical); }
+  .sev-tile--serious  { --tile-color: var(--serious); }
+  .sev-tile--moderate { --tile-color: var(--moderate); }
+  .sev-tile--minor    { --tile-color: var(--minor); }
+
+  .sev-num {
+    font-size: 20pt;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    color: var(--tile-color, var(--ink));
+    margin-bottom: 2mm;
+  }
+
+  .sev-label {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ======================================================================
+     STAT ROW ("What this means" support numbers)
+     ====================================================================== */
+  .stat-row {
+    display: flex;
+    gap: 5mm;
+    margin: 7mm 0 2mm;
+  }
+
+  .stat {
+    flex: 1 1 0;
+    border-left: 2pt solid var(--line-strong);
+    padding-left: 4mm;
+  }
+
+  .stat-num {
+    font-size: 18pt;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 1.5mm;
+  }
+
+  .stat-label {
+    font-size: 8.5pt;
+    color: var(--muted);
+  }
+
+  .prose { max-width: 155mm; }
+  .prose p { margin-bottom: 4mm; }
+  .prose p:last-child { margin-bottom: 0; }
+  .prose strong { color: var(--ink); }
+
+  .callout {
+    background: var(--panel);
+    border-left: 2.5pt solid var(--amber);
+    border-radius: 0 2pt 2pt 0;
+    padding: 5mm 6mm;
+    margin-top: 6mm;
+    font-size: 9.5pt;
+    color: var(--muted);
+    max-width: 155mm;
+  }
+
+  .callout strong { color: var(--ink); }
+
+  /* ======================================================================
+     CHIPS / BADGES
+     ====================================================================== */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    font-size: 8.5pt;
+    font-weight: 600;
+    padding: 1mm 3mm;
+    border-radius: 999px;
+    border: 0.75pt solid var(--line-strong);
+    background: var(--panel);
+    color: var(--ink);
+    margin: 0 1.5mm 1.5mm 0;
+  }
+
+  .chip.mono { font-family: ui-monospace, "SFMono-Regular", Consolas, "Courier New", monospace; }
+
+  .chip-muted { color: var(--muted); }
+
+  /* Level chips: styled generically; data-level is available for the rare
+     case a future revision wants to colour AAA / Best practice separately. */
+  .chip[data-level] { font-weight: 700; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 8.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 1.25mm 3.5mm;
+    border-radius: 999px;
+    border: 1pt solid currentColor;
+    flex: none;
+  }
+
+  .badge--critical { color: var(--critical); background: rgba(var(--critical-rgb), .08); }
+  .badge--serious   { color: var(--serious);  background: rgba(var(--serious-rgb), .08); }
+  .badge--moderate  { color: var(--moderate); background: rgba(var(--moderate-rgb), .08); }
+  .badge--minor     { color: var(--minor);    background: rgba(var(--minor-rgb), .08); }
+
+  /* Score-band tones, reused on the cover ring, band pill and score cards. */
+  .tone-bad     { color: var(--tone-bad); }
+  .tone-warn    { color: var(--tone-warn); }
+  .tone-ok      { color: var(--tone-ok); }
+  .tone-good    { color: var(--tone-good); }
+  .tone-neutral { color: var(--tone-neutral); }
+
+  .band-pill.tone-bad     { background: rgba(var(--tone-bad-rgb), .08); }
+  .band-pill.tone-warn    { background: rgba(var(--tone-warn-rgb), .08); }
+  .band-pill.tone-ok      { background: rgba(var(--tone-ok-rgb), .08); }
+  .band-pill.tone-good    { background: rgba(var(--tone-good-rgb), .08); }
+  .band-pill.tone-neutral { background: rgba(var(--tone-neutral-rgb), .08); }
+
+  .score-card-band.tone-bad     { background: rgba(var(--tone-bad-rgb), .08); }
+  .score-card-band.tone-warn    { background: rgba(var(--tone-warn-rgb), .08); }
+  .score-card-band.tone-ok      { background: rgba(var(--tone-ok-rgb), .08); }
+  .score-card-band.tone-good    { background: rgba(var(--tone-good-rgb), .08); }
+  .score-card-band.tone-neutral { background: rgba(var(--tone-neutral-rgb), .08); }
+
+  /* ======================================================================
+     CRITERIA TABLE (Failed success criteria)
+     ====================================================================== */
+  .data-table {
+    font-size: 9.5pt;
+  }
+
+  .data-table th, .data-table td {
+    text-align: left;
+    padding: 3mm 4mm;
+    border-bottom: 0.75pt solid var(--line);
+    vertical-align: top;
+  }
+
+  .data-table thead th {
+    background: var(--panel);
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    font-weight: 700;
+    border-bottom: 1pt solid var(--line-strong);
+  }
+
+  .data-table tbody tr:last-child td { border-bottom: none; }
+
+  /* ======================================================================
+     ISSUE CARDS (Priority issues / Needs human review)
+     ====================================================================== */
+  .issue-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 0.75pt solid var(--line);
+    border-radius: 3pt;
+    padding: 6mm;
+    margin-bottom: 6mm;
+  }
+
+  .issue-card:last-child { margin-bottom: 0; }
+
+  .issue-head {
+    display: flex;
+    align-items: center;
+    gap: 3mm;
+    margin-bottom: 3mm;
+  }
+
+  .issue-num {
+    flex: none;
+    width: 7mm;
+    height: 7mm;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 8.5pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .issue-title {
+    font-size: 11.5pt;
+    flex: 1 1 auto;
+  }
+
+  .issue-desc {
+    color: var(--muted);
+    font-size: 9.5pt;
+    margin-bottom: 3mm;
+    max-width: 160mm;
+  }
+
+  .issue-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2mm;
+  }
+
+  .issue-link {
+    font-size: 8.5pt;
+    margin-top: 1mm;
+    margin-bottom: 3mm;
+  }
+
+  .issue-link a {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .samples {
+    display: flex;
+    flex-direction: column;
+    gap: 3mm;
+    margin-top: 3mm;
+  }
+
+  .sample {
+    background: var(--panel);
+    border: 0.75pt solid var(--line);
+    border-radius: 2pt;
+    padding: 3.5mm 4mm;
+  }
+
+  .sample-target {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, "Courier New", monospace;
+    font-size: 8pt;
+    color: var(--muted);
+    margin-bottom: 1.5mm;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
+
+  .sample-snippet {
+    font-size: 8pt;
+    line-height: 1.5;
+    color: var(--ink);
+    background: var(--paper);
+    border: 0.5pt solid var(--line);
+    border-radius: 2pt;
+    padding: 2.5mm 3mm;
+  }
+
+  .sample-summary {
+    font-size: 8.5pt;
+    color: var(--muted);
+    margin-top: 2mm;
+  }
+
+  /* Needs-review items reuse the issue card but stay shorter and lighter. */
+  .review-item {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border-left: 2.5pt solid var(--line-strong);
+    border-bottom: 0.75pt solid var(--line);
+    padding: 4mm 0 5mm 5mm;
+    margin-bottom: 1mm;
+  }
+
+  .review-item:last-child { border-bottom: none; }
+
+  /* ======================================================================
+     SEO CHECKLIST
+     ====================================================================== */
+  .seo-table {
+    font-size: 9.5pt;
+  }
+
+  .seo-table th, .seo-table td {
+    text-align: left;
+    padding: 3mm 4mm;
+    border-bottom: 0.75pt solid var(--line);
+    vertical-align: top;
+  }
+
+  .seo-table thead th {
+    background: var(--panel);
+    font-size: 8.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    font-weight: 700;
+    border-bottom: 1pt solid var(--line-strong);
+  }
+
+  .seo-table tbody tr:last-child td { border-bottom: none; }
+
+  .seo-table td.col-status { white-space: nowrap; }
+  .seo-table td.col-weight { text-align: center; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .seo-table td.col-detail { color: var(--muted); }
+
+  .seo-mark {
+    display: inline-block;
+    width: 7pt;
+    height: 7pt;
+    border-radius: 50%;
+    margin-right: 2mm;
+    vertical-align: middle;
+  }
+
+  .seo-mark--pass    { background: var(--pass); }
+  .seo-mark--partial { background: var(--moderate); }
+  .seo-mark--fail     { background: var(--critical); }
+
+  .seo-status-text {
+    font-weight: 700;
+    text-transform: capitalize;
+    vertical-align: middle;
+    font-size: 9pt;
+  }
+
+  .status-pass    { color: var(--pass); }
+  .status-partial { color: var(--moderate); }
+  .status-fail     { color: var(--critical); }
+
+  /* ======================================================================
+     CTA / DISCLAIMER
+     ====================================================================== */
+  .cta-box {
+    background: var(--panel);
+    border: 0.75pt solid var(--line);
+    border-top: 3pt solid var(--amber);
+    border-radius: 3pt;
+    padding: 8mm;
+    margin-top: 6mm;
+    max-width: 160mm;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .cta-box h3 { margin-bottom: 3mm; }
+
+  .cta-contact {
+    margin-top: 5mm;
+    font-size: 12pt;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .cta-contact a { color: var(--ink); }
+
+  .next-steps {
+    margin-top: 5mm;
+    display: flex;
+    flex-direction: column;
+    gap: 3mm;
+    max-width: 155mm;
+  }
+
+  .next-step {
+    display: flex;
+    gap: 3mm;
+  }
+
+  .next-step-num {
+    flex: none;
+    width: 6mm;
+    height: 6mm;
+    border-radius: 50%;
+    border: 1pt solid var(--amber);
+    color: var(--ink);
+    font-size: 8pt;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .next-step p { font-size: 9.5pt; color: var(--muted); }
+  .next-step strong { color: var(--ink); }
+
+  .engine-meta {
+    margin-top: 8mm;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4mm 10mm;
+    max-width: 155mm;
+    border-top: 0.75pt solid var(--line);
+    padding-top: 6mm;
+  }
+
+  .engine-meta dt {
+    font-size: 7.5pt;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    margin-bottom: 1mm;
+  }
+
+  .engine-meta dd {
+    font-size: 9.5pt;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .disclaimer-section .prose p {
+    font-size: 9.5pt;
+    color: var(--muted);
+  }
+
+  .disclaimer-section .prose strong { color: var(--ink); }
+
+</style>
+</head>
+<body>
+
+  <!-- ==================================================================
+       1. COVER PAGE
+       ================================================================== -->
+  <section class="cover">
+    <div class="cover-brand">
+      <svg class="brand-mark" width="34" height="34" viewBox="0 0 40 40" role="img" aria-label="Accessrank">
+        <rect x="1" y="1" width="38" height="38" rx="9" fill="#FFD23F" stroke="#14142A" stroke-width="1.5"/>
+        <path d="M11 21 L17 27.5 L29.5 13" fill="none" stroke="#14142A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="brand-word">Accessrank</span>
+    </div>
+
+    <div class="cover-mid">
+      <p class="eyebrow">Accessibility &amp; SEO Audit Report</p>
+      <h1 class="cover-title">{{ site.title }}</h1>
+      <p class="cover-url">{{ site.url }}</p>
+
+      <div class="cover-score">
+        <div class="score-ring tone-{{ scores.band.tone }}">
+          <span class="score-ring-num">{{ scores.overall }}</span>
+          <span class="score-ring-max">out of 100</span>
+        </div>
+        <span class="band-pill tone-{{ scores.band.tone }}">{{ scores.band.label }}</span>
+      </div>
+    </div>
+
+    <footer class="cover-meta">
+      <div class="cover-meta-row">
+        <div>
+          <span class="meta-label">Prepared for</span>
+          <span class="meta-value">{{ lead.name }}</span>
+        </div>
+        <div>
+          <span class="meta-label">Date</span>
+          <span class="meta-value">{{ report.generatedAt }}</span>
+        </div>
+        <div>
+          <span class="meta-label">Report ID</span>
+          <span class="meta-value mono">{{ report.id }}</span>
+        </div>
+      </div>
+      <p class="cover-disclaimer-hint">
+        A good-faith, automated WCAG 2.2 AA conformance and on-page SEO assessment.
+        See &ldquo;What this means&rdquo; and &ldquo;About this report&rdquo; inside for scope and methodology.
+      </p>
+    </footer>
+  </section>
+
+  <!-- ==================================================================
+       2. AT A GLANCE
+       ================================================================== -->
+  <section class="section">
+    <div class="section-kicker" aria-hidden="true"></div>
+    <h2>At a glance</h2>
+    <p class="section-intro">
+      {{ site.pagesScanned }} page(s) scanned on {{ site.origin }}.
+    </p>
+
+    <div class="score-cards">
+      <div class="score-card score-card--overall tone-{{ scores.band.tone }}">
+        <p class="score-card-label">Overall score</p>
+        <p class="score-card-num">{{ scores.overall }}</p>
+        <span class="score-card-band tone-{{ scores.band.tone }}">{{ scores.band.label }}</span>
+        <div class="meter" aria-hidden="true"><div class="meter-fill" style="width:{{ scores.overall }}%"></div></div>
+      </div>
+      <div class="score-card">
+        <p class="score-card-label">Accessibility</p>
+        <p class="score-card-num">{{ scores.accessibility }}</p>
+        <div class="meter" aria-hidden="true"><div class="meter-fill" style="width:{{ scores.accessibility }}%; background: var(--amber);"></div></div>
+      </div>
+      <div class="score-card">
+        <p class="score-card-label">SEO</p>
+        <p class="score-card-num">{{ scores.seo }}</p>
+        <div class="meter" aria-hidden="true"><div class="meter-fill" style="width:{{ scores.seo }}%; background: var(--amber);"></div></div>
+      </div>
+    </div>
+
+    <h3>Severity breakdown</h3>
+    <p class="section-intro">
+      {{ a11y.violationsTotal }} failing element(s) across {{ a11y.criteriaFailed }} failed success criteria.
+      Severity reflects how much a failure blocks someone from using the page.
+    </p>
+    <div class="severity-grid">
+      <div class="sev-tile sev-tile--critical">
+        <p class="sev-num">{{ a11y.counts.critical }}</p>
+        <p class="sev-label">Critical</p>
+      </div>
+      <div class="sev-tile sev-tile--serious">
+        <p class="sev-num">{{ a11y.counts.serious }}</p>
+        <p class="sev-label">Serious</p>
+      </div>
+      <div class="sev-tile sev-tile--moderate">
+        <p class="sev-num">{{ a11y.counts.moderate }}</p>
+        <p class="sev-label">Moderate</p>
+      </div>
+      <div class="sev-tile sev-tile--minor">
+        <p class="sev-num">{{ a11y.counts.minor }}</p>
+        <p class="sev-label">Minor</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================================================================
+       3. WHAT THIS MEANS
+       ================================================================== -->
+  <section class="section">
+    <div class="section-kicker" aria-hidden="true"></div>
+    <h2>What this means</h2>
+
+    <div class="prose">
+      <p>
+        The accessibility score is <strong>not</strong> a percentage of elements that pass.
+        It is a pass rate across WCAG 2.2 success criteria: each criterion — such as
+        &ldquo;images have text alternatives&rdquo; or &ldquo;text has sufficient colour contrast&rdquo; — is
+        either met or not met on the pages scanned. A criterion failed by one element counts the
+        same as a criterion failed by a hundred, because that is how conformance actually works:
+        no amount of unrelated passing markup earns back a failed criterion.
+      </p>
+      <p>
+        Criteria are weighted by how strictly they matter: <strong>Level A</strong> criteria
+        (the baseline most legal claims cite) carry a weight of 3, <strong>Level AA</strong>
+        criteria (the common ADA/EAA conformance target) carry a weight of 2, and
+        <strong>best-practice</strong> checks that sit outside formal WCAG criteria carry a
+        weight of 1. Your overall score then blends accessibility (60%) with SEO (40%),
+        reflecting how much each tends to affect legal exposure and organic visibility.
+      </p>
+      <p>
+        The <strong>element counts</strong> in the severity breakdown above are a different
+        measurement: they indicate the size of the remediation job, not the score itself. A
+        criterion can be failed by five elements or five hundred — either way it is one failed
+        criterion, but five hundred is a bigger fix.
+      </p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <p class="stat-num">{{ a11y.criteriaEvaluated }}</p>
+        <p class="stat-label">Criteria evaluated</p>
+      </div>
+      <div class="stat">
+        <p class="stat-num">{{ a11y.criteriaMet }}</p>
+        <p class="stat-label">Met</p>
+      </div>
+      <div class="stat">
+        <p class="stat-num">{{ a11y.criteriaFailed }}</p>
+        <p class="stat-label">Failed</p>
+      </div>
+      <div class="stat">
+        <p class="stat-num">{{ a11y.criteriaReview }}</p>
+        <p class="stat-label">Needs manual review</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>On its own, automated testing is a floor, not a ceiling.</strong> Tools like this
+      one — including the axe-core engine behind it — reliably catch roughly a third to a half of
+      real-world accessibility barriers: broken alt text, missing labels, insufficient contrast,
+      and structural markup problems. They cannot judge whether a screen-reader user can actually
+      complete checkout, whether focus order makes sense, or whether a video's captions are
+      accurate. A conformance claim requires manual testing and assistive-technology testing on
+      top of what is in this report, not instead of it.
+    </div>
+  </section>
+
+  <!-- ==================================================================
+       4. FAILED SUCCESS CRITERIA
+       ================================================================== -->
+  <section class="section">
+    <div class="section-kicker" aria-hidden="true"></div>
+    <h2>Failed success criteria</h2>
+    <p class="section-intro">
+      Every WCAG 2.2 success criterion failed anywhere across the {{ site.pagesScanned }} page(s)
+      scanned. This is the list a demand letter or conformance audit would cite.
+    </p>
+
+    {{#if a11y.failedCriteriaDetailed}}
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th scope="col">Criterion</th>
+          <th scope="col">Name</th>
+          <th scope="col">Level</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each a11y.failedCriteriaDetailed}}
+        <tr>
+          <td class="mono">{{ this.id }}</td>
+          <td>{{ this.name }}</td>
+          <td><span class="chip" data-level="{{ this.level }}">{{ this.level }}</span></td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+    {{else}}
+    <p class="empty-note">No failed success criteria were recorded for this scan.</p>
+    {{/if}}
+  </section>
+
+  <!-- ==================================================================
+       5. PRIORITY ISSUES
+       ================================================================== -->
+  <section class="section">
+    <div class="section-kicker" aria-hidden="true"></div>
+    <h2>Priority issues</h2>
+    <p class="section-intro">
+      Ordered worst first: the failures most likely to block a real visitor, affecting the most
+      elements, come before smaller or lower-impact ones.
+    </p>
+
+    {{#if a11y.issues}}
+    {{#each a11y.issues}}
+    <article class="issue-card">
+      <div class="issue-head">
+        <span class="issue-num">{{ @number }}</span>
+        <span class="badge badge--{{ impact }}">{{ impact }}</span>
+        <h3 class="issue-title">{{ help }}</h3>
+      </div>
+
+      <p class="issue-desc">{{ description }}</p>
+
+      <div class="issue-meta">
+        <span class="chip">{{ nodes }} element(s) affected</span>
+        {{#each criteria}}<span class="chip mono">{{ this }}</span>{{/each}}
+        {{#unless criteria}}<span class="chip chip-muted">No specific criterion mapped</span>{{/unless}}
+        <span class="chip" data-level="{{ level }}">{{ level }}</span>
+      </div>
+
+      <p class="issue-link"><a href="{{ helpUrl }}">{{ helpUrl }}</a></p>
+
+      {{#if sample}}
+      <div class="samples">
+        {{#each sample}}
+        <div class="sample">
+          <p class="sample-target">{{ this.target }}</p>
+          <pre class="sample-snippet">{{ this.snippet }}</pre>
+          {{#if this.summary}}<p class="sample-summary">{{ this.summary }}</p>{{/if}}
+        </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </article>
+    {{/each}}
+    {{else}}
+    <p class="empty-note">No priority issues were found in this scan.</p>
+    {{/if}}
+  </section>
+
+  <!-- ==================================================================
+       6. NEEDS HUMAN REVIEW
+       ================================================================== -->
+  <section class="section">
+    <div class="section-kicker" aria-hidden="true"></div>
+    <h2>Needs human review</h2>
+    <p class="section-intro">
+      Automated testing could not determine pass or fail for these — a person needs to confirm
+      them, typically with a few minutes of manual and screen-reader testing per item.
+    </p>
+
+    {{#if a11y.needsReview}}
+    {{#each a11y.needsReview}}
+    <div class="review-item">
+      <div class="issue-head">
+        <span class="badge badge--{{ impact }}">{{ impact }}</span>
+        <h3 class="issue-title">{{ help }}</h3>
+      </div>
+      <p class="issue-desc">{{ description }}</p>
+      <div class="issue-meta">
+        <span class="chip">{{ nodes }} element(s)</span>
+        {{#each criteria}}<span class="chip mono">{{ this }}</span>{{/each}}
+        <span class="chip" data-level="{{ level }}">{{ level }}</span>
+      </div>
+    </div>
+    {{/each}}
+    {{else}}
+    <p class="empty-note">No additional items were flagged for manual review.</p>
+    {{/if}}
+  </section>
+
+  <!-- ==================================================================
+       7. SEO CHECKLIST
+       ================================================================== -->
+  <section class="section">
+    <div class="section-kicker" aria-hidden="true"></div>
+    <h2>SEO checklist</h2>
+    <p class="section-intro">{{ seo.passed }} of {{ seo.total }} checks passed.</p>
+
+    <table class="seo-table">
+      <thead>
+        <tr>
+          <th scope="col">Check</th>
+          <th scope="col">Status</th>
+          <th scope="col">Weight</th>
+          <th scope="col">Detail</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each seo.checks}}
+        <tr>
+          <td>{{ label }}</td>
+          <td class="col-status">
+            <span class="seo-mark seo-mark--{{ status }}" aria-hidden="true"></span><span class="seo-status-text status-{{ status }}">{{ status }}</span>
+          </td>
+          <td class="col-weight">{{ weight }}</td>
+          <td class="col-detail overflow-safe">{{#if detail}}{{ detail }}{{else}}&mdash;{{/if}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ==================================================================
+       8. WHAT HAPPENS NEXT
+       ================================================================== -->
+  <section class="section cta-section">
+    <div class="section-kicker" aria-hidden="true"></div>
+    <h2>What happens next</h2>
+    <p class="section-intro">
+      This report is a starting point, not a finish line. Here is how most stores move from this
+      PDF to a defensible WCAG 2.2 AA conformance claim.
+    </p>
+
+    <div class="next-steps">
+      <div class="next-step">
+        <span class="next-step-num" aria-hidden="true">1</span>
+        <p><strong>We triage with you.</strong> A short walkthrough of the priority issues above,
+          ranked by effort and risk, so engineering time goes to what matters first.</p>
+      </div>
+      <div class="next-step">
+        <span class="next-step-num" aria-hidden="true">2</span>
+        <p><strong>We remediate in the source code.</strong> Fixes are made directly in your
+          storefront templates and theme, not patched over with an overlay script.</p>
+      </div>
+      <div class="next-step">
+        <span class="next-step-num" aria-hidden="true">3</span>
+        <p><strong>We verify with manual and assistive-technology testing.</strong> Automated
+          re-scans confirm regressions haven't crept back in; human testing confirms the parts a
+          scanner cannot judge.</p>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <h3>Talk to Accessrank</h3>
+      <p>We'll walk through this report together and scope what a full remediation looks like for
+        your store.</p>
+      <p class="cta-contact">accessrank.ai &nbsp;&middot;&nbsp; info@accessrank.ai</p>
+    </div>
+  </section>
+
+  <!-- ==================================================================
+       9. FOOTER / DISCLAIMER PAGE
+       ================================================================== -->
+  <section class="section disclaimer-section">
+    <div class="section-kicker" aria-hidden="true"></div>
+    <h2>About this report</h2>
+
+    <div class="prose">
+      <p>
+        This report is a good-faith, automated assessment of the pages listed below against WCAG
+        2.2 Level AA success criteria and a set of on-page SEO signals, generated without any
+        human review of the underlying source code. It is intended to help prioritise remediation
+        work, not to serve as a final word on conformance.
+      </p>
+      <p>
+        <strong>This is not legal advice.</strong> Nothing in this report should be relied upon as
+        a legal opinion regarding compliance with the Americans with Disabilities Act (ADA), the
+        European Accessibility Act (EAA), Section 508, or any other law or regulation. Consult
+        qualified legal counsel for advice specific to your business.
+      </p>
+      <p>
+        <strong>This is not a certification of conformance.</strong> As explained under
+        &ldquo;What this means,&rdquo; automated tools such as this one detect a meaningful but
+        partial slice of real accessibility barriers. A conformance claim requires manual testing,
+        assistive-technology testing, and human judgement that this report does not substitute
+        for.
+      </p>
+      <p>
+        <strong>Receiving this report does not create an attorney-client relationship</strong>
+        between you and Accessrank, nor between you and any individual who prepared or reviewed
+        it.
+      </p>
+    </div>
+
+    {{#if site.pageUrls}}
+    <h3 style="margin-top: 8mm;">Pages scanned</h3>
+    <ul class="prose" style="max-width: 165mm;">
+      {{#each site.pageUrls}}
+      <li class="overflow-safe mono" style="font-size: 9pt; color: var(--muted); margin-bottom: 1.5mm;">{{ this }}</li>
+      {{/each}}
+    </ul>
+    {{/if}}
+
+    <dl class="engine-meta">
+      <div>
+        <dt>Engine</dt>
+        <dd>{{ engine.name }} v{{ engine.version }}</dd>
+      </div>
+      <div>
+        <dt>Rules engine</dt>
+        <dd>{{#if engine.axeVersion}}axe-core {{ engine.axeVersion }}{{else}}axe-core{{/if}}</dd>
+      </div>
+      <div>
+        <dt>Report generated</dt>
+        <dd>{{ report.generatedAt }}</dd>
+      </div>
+      <div>
+        <dt>Report ID</dt>
+        <dd class="mono">{{ report.id }}</dd>
+      </div>
+    </dl>
+  </section>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+/*
+ * layout.css — shared site chrome: the --edge container system, the primary
+ * nav (.site-nav, unified with index.html's .nav and auth.css's .topbar),
+ * the site footer (.site-footer, unified with index.html's .footer), and
+ * shared button classes (.btn-primary, .btn-secondary, .cta-nav, .submit-btn).
+ * Generated from legacy/index.html (<style> block) + legacy/auth.css.
+ *
+ * Note: no ".btn-ghost" class exists in either legacy source, so none was
+ * invented here. "Pills" (.wcag-link, .eyebrow-pill) are page-specific
+ * content badges, not global chrome, and stay in home.css / pages.css.
+ * ".logo"/".logo-mark" are NOT unified here: index.html and auth.css style
+ * them with genuinely different values (24px vs 30px mark, etc.), so
+ * forcing one shared rule would visibly change one page or the other —
+ * they stay split in home.css / pages.css, scoped by ".site"/".page" so
+ * they don't collide (see build.mjs note below).
+ *
+ * IMPORTANT: build.mjs bundles tokens+fonts+base+layout+home+pages into a
+ * SINGLE site.css used by every page (not "home OR pages" per-page-type as
+ * elsewhere assumed) — see build() / the `bundle([...])` call around line
+ * 206. Because of that, any selector in home.css or pages.css that reuses
+ * a bare class/element name also used by the other page type must be
+ * scoped with ".site " / ".page " (the two page-root wrapper classes) to
+ * avoid one page's rule silently overriding the other's.
+ */
+
+/* ---- Shared container system ---- */
+.site, .page { --edge: max(64px, calc((100% - 1280px) / 2 + 64px)); }
+@media (max-width: 1000px) {
+  .site, .page { --edge: 40px; }
+}
+
+/* ---- Primary nav ----
+   index.html: ".site .nav" (padding-top 40px, no gap). auth.css: ".topbar"
+   (padding-top 24px, gap 24px). Unified under .site-nav; index.html's
+   values kept canonical per migration spec. */
+.site-nav, .nav, .topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 40px var(--edge) 18px; /* was: 24px var(--edge) 18px in auth.css (.topbar) */
+  gap: 24px; /* auth.css (.topbar) only; index.html's .nav had no gap declared here */
+}
+
+/* ---- Site footer ----
+   index.html: ".site .footer" (padding-bottom 32px, no margin-top).
+   auth.css: ".site-footer" (padding-bottom 28px, margin-top: 8px). Unified
+   under .site-footer; index.html's values kept canonical per migration spec.
+   All other sub-rules below were byte-identical between the two sources. */
+.site-footer, .footer { position: relative; padding: 32px var(--edge) 32px; background: #0A1130; margin-top: 8px; } /* padding was: 32px var(--edge) 28px in auth.css (.site-footer); margin-top is auth.css (.site-footer) only, index.html's .footer had none */
+.footer-top { display: grid; grid-template-columns: minmax(0, 2fr) auto; gap: 48px 56px; align-items: start; margin-bottom: 4px; }
+.footer-brand { max-width: 520px; }
+.site .footer-brand .logo, .site-footer .footer-brand .logo { font-size: 22px; margin-bottom: 14px; } /* selectors kept exactly as each source wrote them (.site.../.site-footer...) — needs to stay 3 classes deep to keep outranking the base .site .logo / .page .logo rules (home.css/pages.css), which load later in the build */
+.footer-tagline { font-size: 17px; line-height: 1.55; color: var(--text); margin: 0 0 8px; text-wrap: balance; }
+.footer-cols { display: flex; gap: 44px; }
+.footer-col a { display: block; color: var(--text-soft); font-size: 14px; padding: 7px 0; min-height: 24px; transition: color 0.15s ease; }
+.footer-col a:hover { color: var(--brand); }
+.footer-disclaimer { font-size: 11.5px; line-height: 1.65; color: #8A8E9A; margin: 0; padding: 0; max-width: 960px; text-wrap: balance; } /* TODO(contrast): verify against WCAG 1.4.3 */
+.footer-legalrow { display: flex; justify-content: space-between; align-items: flex-end; gap: 48px; flex-wrap: wrap; }
+.footer-bottom { display: flex; justify-content: flex-end; align-items: center; gap: 18px; flex-wrap: wrap; padding-top: 0; font-size: 12px; color: var(--text-faint); white-space: nowrap; } /* TODO(contrast): verify against WCAG 1.4.3 */
+
+@media (max-width: 720px) {
+  /* from index.html's general responsive block; has no visual effect since
+     .footer-top is display:grid, not flex — preserved exactly as authored */
+  .footer-top { flex-direction: column; gap: 24px; }
+}
+@media (max-width: 720px) {
+  .footer-top { grid-template-columns: 1fr; gap: 34px; }
+  .footer-cols { gap: 48px; } /* was: flex-wrap: wrap; gap: 22px 48px; in auth.css (.site-footer .footer-cols) */
+}
+
+/* ---- Shared buttons ---- */
+.btn-primary { background: var(--brand); color: var(--brand-ink); padding: 13px 22px; border-radius: 8px; font-weight: 500; font-size: 13px; transition: opacity 0.15s ease; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-secondary { background: transparent; color: var(--text); padding: 13px 22px; border-radius: 8px; font-weight: 500; font-size: 13px; border: 1px solid #FFFFFF; transition: background 0.15s ease, border-color 0.15s ease; }
+.btn-secondary:hover { background: var(--hairline); border-color: #FFFFFF; }
+.cta-nav { background: var(--brand); color: var(--brand-ink); padding: 8px 14px; border-radius: 6px; font-weight: 500; font-size: 12px; }
+
+.submit-btn {
+  width: 100%; background: var(--brand); color: var(--brand-ink);
+  font-size: 15px; font-weight: 700; letter-spacing: -0.2px;
+  padding: 14px; border-radius: 10px; margin-top: 8px;
+  transition: transform .2s var(--ease-out), box-shadow .2s ease, filter .15s ease;
+}
+a.submit-btn, a.submit-btn:hover, a.submit-btn:visited { color: var(--brand-ink); }
+.submit-btn:hover { filter: brightness(1.04); transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(var(--brand-rgb), 0.7); }
+.submit-btn:active { transform: translateY(0); }

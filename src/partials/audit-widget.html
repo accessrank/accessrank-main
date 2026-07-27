@@ -1,0 +1,134 @@
+      <div class="audit-card" id="audit-card">
+        <div class="audit-head">
+          <h2 class="audit-title" id="audit">Free accessibility check</h2>
+          <span class="audit-meta" id="audit-meta">WCAG 2.2 AA &middot; axe-core</span>
+        </div>
+
+        <form class="url-form" id="audit-form" novalidate>
+          <label class="visually-hidden" for="audit-url">Your store address</label>
+          <input
+            class="url-input"
+            id="audit-url"
+            name="url"
+            type="url"
+            inputmode="url"
+            autocomplete="url"
+            spellcheck="false"
+            placeholder="yourstore.com"
+            aria-describedby="audit-hint">
+          <button class="scan-btn" id="audit-submit" type="submit">Check my store</button>
+        </form>
+
+        <p class="audit-hint" id="audit-hint">
+          We load your page in a real browser and test it against all applicable
+          WCAG 2.2 Level AA success criteria. Takes about 20 seconds.
+        </p>
+
+        <p class="audit-error" id="audit-error" role="alert" hidden></p>
+
+        <p class="scan-status" id="audit-status" role="status" aria-live="polite"></p>
+
+        <div class="audit-results" id="audit-results"></div>
+
+        <p class="empty-state" id="audit-empty">
+          Enter your store address to see which success criteria you currently meet.
+        </p>
+
+        <button class="report-cta" id="audit-report-cta" type="button" hidden>
+          Email me the full report (PDF)
+        </button>
+      </div>
+
+      <!-- Lead capture. Shown only after a real scan has produced a scanId. -->
+      <div class="modal" id="report-modal" role="dialog" aria-modal="true" aria-labelledby="report-modal-title" hidden>
+        <div class="modal-panel">
+          <button class="modal-close" type="button" data-close-modal>
+            <span aria-hidden="true">&times;</span>
+            <span class="visually-hidden">Close</span>
+          </button>
+
+          <form class="modal-form" id="report-form" novalidate>
+            <h2 class="modal-title" id="report-modal-title">Where should we send it?</h2>
+            <p class="modal-sub">
+              We will email the full PDF report for <strong id="report-site">your store</strong> —
+              every finding, the elements affected, and how to fix each one.
+            </p>
+
+            <!-- Every field here is required, and each label says so. A field
+                 that is quietly mandatory behind copy implying otherwise is
+                 exactly the pattern this company audits out of other people's
+                 checkouts. -->
+            <div class="field">
+              <label for="report-name">Your name <span class="req">(required)</span></label>
+              <input id="report-name" name="name" type="text" autocomplete="name" required>
+            </div>
+
+            <div class="field">
+              <label for="report-email">Work email <span class="req">(required)</span></label>
+              <input id="report-email" name="email" type="email" autocomplete="email" required
+                     aria-describedby="report-email-hint">
+              <p class="field-hint" id="report-email-hint">The report is delivered here, so use a real inbox.</p>
+            </div>
+
+            <div class="field">
+              <label for="report-phone">Phone <span class="req">(required)</span></label>
+              <input id="report-phone" name="phone" type="tel" autocomplete="tel" required
+                     aria-describedby="report-phone-hint">
+              <p class="field-hint" id="report-phone-hint">So a specialist can talk the findings through with you.</p>
+            </div>
+
+            <!--
+              Bot traps. `company_website` is hidden from people but attractive to
+              form-filling bots; formLoadedAt catches submissions faster than a
+              human could type. Both are checked server-side.
+            -->
+            <div class="hp-field" aria-hidden="true">
+              <label for="report-company-website">Company website</label>
+              <input id="report-company-website" name="company_website" type="text" tabindex="-1" autocomplete="off">
+            </div>
+            <input type="hidden" name="formLoadedAt" value="">
+
+            <div class="field field-check">
+              <input id="report-consent" name="consent" type="checkbox" required>
+              <label for="report-consent">
+                I agree to Accessrank contacting me about this report and accept the
+                <a href="/privacy" target="_blank" rel="noopener">privacy policy</a>.
+              </label>
+            </div>
+
+            <div class="field field-check">
+              <input id="report-marketing" name="marketingOptIn" type="checkbox">
+              <label for="report-marketing">
+                Send me occasional accessibility and SEO guidance. Unsubscribe any time.
+              </label>
+            </div>
+
+            {{#if turnstileSiteKey}}
+            <div class="cf-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="dark"></div>
+            {{/if}}
+
+            <p class="form-status" id="report-status" role="alert" aria-live="assertive"></p>
+
+            <button class="submit-btn" type="submit">Email me the report</button>
+
+            <p class="modal-note">
+              One report per email address. We never sell your details.
+            </p>
+          </form>
+
+          <div class="modal-success" id="report-success" hidden>
+            <span class="success-mark" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor"
+                   stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" focusable="false">
+                <polyline points="4 12.5 9.5 18 20 6.5"></polyline>
+              </svg>
+            </span>
+            <h2 class="modal-title">Your report is on its way</h2>
+            <p class="modal-sub">
+              We have sent it to <strong id="report-success-email">your inbox</strong>.
+              It usually arrives within a minute — check spam if you do not see it.
+            </p>
+            <button class="submit-btn" type="button" data-close-modal>Done</button>
+          </div>
+        </div>
+      </div>

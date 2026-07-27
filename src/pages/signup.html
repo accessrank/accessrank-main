@@ -1,0 +1,85 @@
+<section class="auth-main">
+  <div class="auth-grid">
+    <div class="auth-copy">
+      <a class="back-link" href="/">
+        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M8.5 3 L4 7 L8.5 11" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Back to site
+      </a>
+      <div class="intro">
+        <span class="eyebrow-pill" data-plan-pill>Growth plan</span>
+        <h1>Tell us about your store, <span class="accent">get a fixed-scope plan back.</span></h1>
+        <p>No account and no password to manage. Send us your store URL and we will scan it, then come back with a remediation plan, timeline and price.</p>
+      </div>
+      <div class="trust-row">
+        <span class="item"><span class="tick"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3 7 L6 10 L11 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>WCAG 2.2 AA audit on first scan</span>
+        <span class="item"><span class="tick"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3 7 L6 10 L11 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Shopify, WordPress &amp; custom</span>
+        <span class="item"><span class="tick"><svg viewBox="0 0 14 14" aria-hidden="true" focusable="false"><path d="M3 7 L6 10 L11 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Real fixes, not an overlay</span>
+      </div>
+    </div>
+
+    <div class="form-card">
+      <h2 class="form-title">Start your remediation plan</h2>
+      <p class="form-sub">Takes about a minute. A specialist follows up with scope and pricing.</p>
+
+      <form id="signupForm" data-lead-form novalidate>
+        <input type="hidden" name="source" value="signup">
+
+        <div class="field-row">
+          <div class="field">
+            <label for="signup-firstName">First name</label>
+            <input type="text" id="signup-firstName" name="firstName" autocomplete="given-name" placeholder="Jordan" required>
+          </div>
+          <div class="field">
+            <label for="signup-lastName">Last name</label>
+            <input type="text" id="signup-lastName" name="lastName" autocomplete="family-name" placeholder="Rivera" required>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="signup-email">Work email</label>
+          <input type="email" id="signup-email" name="email" autocomplete="email" placeholder="jordan@yourstore.com" required>
+        </div>
+
+        <div class="field">
+          <label for="signup-website">Store URL</label>
+          <input type="url" id="signup-website" name="website" autocomplete="url" placeholder="https://yourstore.com" required>
+        </div>
+
+        <div class="field">
+          <label for="signup-plan">Plan</label>
+          <select id="signup-plan" name="plan">
+            <option value="starter">Starter</option>
+            <option value="growth" selected>Growth (most popular)</option>
+            <option value="enterprise">Enterprise</option>
+          </select>
+        </div>
+
+        <div class="hp-field" aria-hidden="true">
+          <label for="signup-company-website">Company website</label>
+          <input id="signup-company-website" name="company_website" type="text" tabindex="-1" autocomplete="off">
+        </div>
+        <input type="hidden" name="formLoadedAt" value="">
+
+        <div class="field field-check">
+          <input id="signup-consent" name="consent" type="checkbox" required>
+          <label for="signup-consent">I agree to Accessrank contacting me and accept the <a href="/privacy">privacy policy</a>.</label>
+        </div>
+        <div class="field field-check">
+          <input id="signup-marketing" name="marketingOptIn" type="checkbox">
+          <label for="signup-marketing">Send me occasional accessibility and SEO guidance.</label>
+        </div>
+
+        {{#if turnstileSiteKey}}<div class="cf-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="dark"></div>{{/if}}
+
+        <p class="form-status" data-form-status role="alert" aria-live="assertive"></p>
+
+        <button class="submit-btn" type="submit">Start my remediation plan</button>
+      </form>
+
+      <div class="form-success" data-form-success hidden>
+        <h2>Thanks — we have got it.</h2>
+        <p>A specialist will look at your store and follow up by email with a fixed-scope remediation plan, timeline and price.</p>
+      </div>
+    </div>
+  </div>
+</section>
