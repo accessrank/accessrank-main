@@ -149,7 +149,7 @@ function build() {
   // Order is the cascade. a11y.css is deliberately last so a component rule
   // cannot silently override a conformance requirement.
   const cssSource = bundle(
-    ['tokens.css', 'fonts.css', 'base.css', 'layout.css', 'home.css', 'pages.css', 'a11y.css'],
+    ['tokens.css', 'fonts.css', 'base.css', 'layout.css', 'home.css', 'pages.css', 'components.css', 'a11y.css'],
     cssDir,
   );
   const css = minifyCss(cssSource);

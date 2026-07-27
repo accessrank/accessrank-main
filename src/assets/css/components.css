@@ -1,0 +1,171 @@
+/*
+ * components.css — UI that did not exist in the original site.
+ *
+ * Loaded AFTER home.css and pages.css. These are new components (the mobile
+ * nav, the report modal, consent checkboxes, form status regions, the ghost
+ * button), not overrides of legacy styling — so they must not be shadowed by
+ * the page stylesheets they sit alongside. layout.css loads before those, and
+ * putting them there meant pages.css silently won every equal-specificity
+ * collision: the consent checkbox rendered above its label instead of beside it.
+ */
+
+/* --- migration additions --- */
+
+/* The hero's secondary CTA was a dead <button> in the original and is now a
+ * real link, but no ghost-button style existed to give it. */
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 13px 22px; border-radius: 8px;
+  font-weight: 500; font-size: 13px;
+  color: var(--text); background: transparent;
+  border: 1px solid var(--hairline-strong);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+.btn-ghost:hover { border-color: var(--brand-border); background: var(--brand-soft); }
+
+/* Semantic lists used as layout containers.
+ *
+ * These were <div> grids in the original. They are real <ul>/<ol> now so screen
+ * readers announce "list, 4 items", but that brings the browser's default
+ * bullets and 40px inline padding with it. */
+.risk-grid, .pour, .feature-grid, .stats-strip-inner, .pricing-grid,
+.criteria-list, .lawsuit-steps, .price-features, .footer-list,
+.marquee-track, .nav-right ul, .job-list, .perks {
+  list-style: none;
+  margin: 0;
+  padding-inline-start: 0;
+}
+
+/* Mobile navigation toggle. The original site had no mobile menu at all. */
+.nav-toggle { display: none; }
+@media (max-width: 860px) {
+  .nav-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 42px; height: 42px; border-radius: 8px;
+    background: transparent; border: 1px solid var(--hairline);
+    color: var(--text); cursor: pointer;
+  }
+  .nav-toggle-bars { display: grid; gap: 4px; }
+  .nav-toggle-bars span { display: block; width: 18px; height: 2px; background: currentColor; border-radius: 2px; }
+
+  .site-nav .nav-right, .nav .nav-right {
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; align-items: stretch; gap: 4px;
+    padding: 12px var(--edge) 18px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--hairline);
+    display: none;
+  }
+  .site-nav .nav-right.is-open, .nav .nav-right.is-open { display: flex; }
+  .site-nav { position: relative; }
+  .nav-right .nav-link { padding: 12px 4px; }
+  .nav-right .cta-nav { text-align: center; margin-top: 6px; }
+}
+
+/* Modal dialog for report lead capture. */
+.modal {
+  position: fixed; inset: 0; z-index: 200;
+  display: grid; place-items: center;
+  padding: 20px;
+  background: rgba(6, 8, 20, 0.72);
+  backdrop-filter: blur(4px);
+  overflow-y: auto;
+}
+.modal[hidden] { display: none; }
+.modal-panel {
+  position: relative; width: 100%; max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 16px;
+  padding: 30px 28px 26px;
+  box-shadow: 0 30px 80px -20px rgba(0, 0, 0, 0.7);
+}
+.modal-close {
+  position: absolute; top: 12px; right: 12px;
+  width: 36px; height: 36px; border-radius: 8px;
+  background: transparent; border: 0; color: var(--text-muted);
+  font-size: 22px; line-height: 1; cursor: pointer;
+}
+.modal-close:hover { color: var(--text); background: rgba(255, 255, 255, 0.06); }
+.modal-title { font-size: 22px; font-weight: 700; letter-spacing: -0.6px; margin: 0 0 8px; color: var(--text); text-align: left; }
+.modal-sub { font-size: 14px; line-height: 1.55; color: var(--text-soft); margin: 0 0 20px; }
+.modal-note { font-size: 12px; color: var(--text-muted); margin: 14px 0 0; text-align: center; }
+.modal-success { text-align: center; }
+.success-mark {
+  display: inline-grid; place-items: center;
+  width: 52px; height: 52px; margin: 0 auto 16px;
+  border-radius: 50%; background: var(--brand-soft); color: var(--brand);
+}
+.modal-success .modal-title { text-align: center; }
+.modal-success .modal-sub { text-align: center; }
+body.modal-open { overflow: hidden; }
+
+/* Honeypot: removed from the accessibility tree and from view, but still a real
+ * focusable-free field a naive bot will happily fill in. */
+.hp-field {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden; clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+ * Form components. New in the migration: the original markup had no consent
+ * checkboxes, no inline hints, and no status region, because both forms posted
+ * to a third-party relay.
+ * ------------------------------------------------------------------------- */
+
+/* A checkbox and its label must sit on one line with the box first. Without an
+ * explicit rule the label block-wraps under a centred input. */
+.field-check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: start;
+  gap: 10px;
+  margin: 0 0 12px;
+}
+.field-check input[type="checkbox"] {
+  width: 18px; height: 18px;
+  margin: 2px 0 0;
+  accent-color: var(--brand);
+  flex: none;
+  cursor: pointer;
+}
+.field-check label {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--text-soft);
+  text-align: left;
+  cursor: pointer;
+}
+.field-check a { color: var(--brand); }
+
+.field-hint {
+  margin: 6px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+/* Status region for async form results. Empty by default so it takes no space
+ * until it has something to announce. */
+.form-status { margin: 12px 0 0; font-size: 13px; line-height: 1.5; }
+.form-status:empty { margin: 0; }
+.form-status.is-error { color: #FCA5A5; }
+.form-status.is-success { color: #86EFAC; }
+
+/* Invalid fields are marked with a border AND the message above — never colour
+ * alone (WCAG 1.4.1). */
+[aria-invalid="true"] {
+  border-color: #F87171 !important;
+  box-shadow: 0 0 0 1px #F87171;
+}
+
+.form-success {
+  text-align: center;
+  padding: 32px 24px;
+}
+.form-success h2 { font-size: 22px; margin: 0 0 10px; color: var(--text); }
+.form-success p { margin: 0 0 8px; color: var(--text-soft); line-height: 1.6; }
