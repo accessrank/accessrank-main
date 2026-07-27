@@ -1,0 +1,20 @@
+# Keep the build context small and never ship secrets or local state.
+node_modules
+dist
+.git
+.github
+.env
+.env.*
+!.env.example
+*.log
+tests
+legacy
+docs
+*.png
+!src/assets/img/*.png
+report-preview.*
+shot-*.png
+pdfshot-*.png
+coverage
+.vscode
+.idea
