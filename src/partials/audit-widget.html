@@ -24,6 +24,11 @@
           WCAG 2.2 Level AA success criteria. Takes about 20 seconds.
         </p>
 
+        {{#if turnstileSiteKey}}
+        <!-- Required by /api/scan, and must stay inside #audit-card. See .audit-turnstile in home.css. -->
+        <div class="cf-turnstile audit-turnstile" data-sitekey="{{ turnstileSiteKey }}" data-theme="dark"></div>
+        {{/if}}
+
         <p class="audit-error" id="audit-error" role="alert" hidden></p>
 
         <p class="scan-status" id="audit-status" role="status" aria-live="polite"></p>

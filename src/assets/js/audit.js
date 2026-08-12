@@ -28,6 +28,22 @@
 
   var state = { scanning: false, scanId: null, result: null };
 
+  /**
+   * Reset ONE Turnstile widget, by its container.
+   *
+   * Tokens are single-use: the server spends them at siteverify, but the widget
+   * has no way to know and keeps offering the spent token until its ~5-minute
+   * self-refresh. There are two widgets on this page (scan card + report modal),
+   * and a bare `turnstile.reset()` resets whichever rendered FIRST — so the
+   * modal's error path was resetting the card's widget while its own kept the
+   * dead token. Every reset here names its widget.
+   */
+  function resetTurnstileIn(container) {
+    if (!window.turnstile || !container) return;
+    var widget = container.querySelector('.cf-turnstile');
+    if (widget) try { window.turnstile.reset(widget); } catch (e) { /* not rendered yet */ }
+  }
+
   /* ------------------------------------------------------------ util --- */
 
   function el(tag, className, text) {
@@ -219,6 +235,10 @@
       state.scanning = false;
       button.disabled = false;
       button.textContent = button.dataset.label || 'Scan';
+      // Success or failure, the server has now spent this token (or rejected
+      // it). Without this, the SECOND scan re-sends the used token and dies
+      // with "That verification check expired" every time.
+      resetTurnstileIn(card);
     });
   }
 
@@ -245,14 +265,25 @@
   var modalClose = modal ? modal.querySelectorAll('[data-close-modal]') : [];
   var lastFocused = null;
 
-  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
+  // `iframe` is here because the Turnstile widget renders one inside the
+  // modal, and an iframe is a tab stop. Without it the focus trap did not
+  // know the iframe existed, so a keyboard user tabbing through the report
+  // dialog escaped into the page behind it — found the first time the tests
+  // ran against a build with the captcha actually present.
+  var FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select, textarea, iframe, [tabindex]:not([tabindex="-1"])';
+
+  function modalFocusables() {
+    return Array.prototype.filter.call(
+      modal.querySelectorAll(FOCUSABLE),
+      function (node) {
+        return node.offsetParent !== null && node.className.indexOf('focus-sentinel') === -1;
+      }
+    );
+  }
 
   function trapFocus(e) {
     if (e.key !== 'Tab' || !modal || modal.hidden) return;
-    var items = Array.prototype.filter.call(
-      modal.querySelectorAll(FOCUSABLE),
-      function (node) { return node.offsetParent !== null; }
-    );
+    var items = modalFocusables();
     if (!items.length) return;
     var first = items[0];
     var last = items[items.length - 1];
@@ -260,10 +291,55 @@
     else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
   }
 
+  /**
+   * Sentinels close the gap enumeration cannot: Turnstile renders its widget
+   * inside a CLOSED shadow root, so no querySelectorAll can see the iframe the
+   * visitor tabs into — and one more Tab used to walk straight out of the
+   * dialog into the page behind it. Two zero-size tabbable spans at the very
+   * edges of the panel catch focus the moment it crosses either boundary and
+   * hand it to the far end, whatever unknowable content sits in between.
+   */
+  function ensureSentinels() {
+    var panel = modal.querySelector('.modal-panel') || modal;
+    if (panel.querySelector('.focus-sentinel')) return;
+    ['start', 'end'].forEach(function (edge) {
+      var s = document.createElement('span');
+      s.tabIndex = 0;
+      s.className = 'focus-sentinel';
+      s.addEventListener('focus', function () {
+        var items = modalFocusables();
+        if (!items.length) return;
+        (edge === 'start' ? items[items.length - 1] : items[0]).focus();
+      });
+      if (edge === 'start') panel.insertBefore(s, panel.firstChild);
+      else panel.appendChild(s);
+    });
+
+    /**
+     * Recovery net for focus DROPPING, not crossing. A broken Turnstile widget
+     * (e.g. its key rejects the current hostname) can swallow a Tab entirely:
+     * focus falls to <body> mid-panel without ever reaching a sentinel, and no
+     * focus event fires for body — so the only reliable hook is noticing,
+     * just after a focusout, that the document lost track. When the widget is
+     * healthy this never triggers: focus inside its closed shadow root reports
+     * the host element, which is inside the modal.
+     */
+    modal.addEventListener('focusout', function () {
+      setTimeout(function () {
+        if (!modal || modal.hidden) return;
+        var active = document.activeElement;
+        if (active && active !== document.body && modal.contains(active)) return;
+        var items = modalFocusables();
+        if (items.length) items[0].focus();
+      }, 0);
+    });
+  }
+
   function openModal() {
     if (!modal) return;
     lastFocused = document.activeElement;
     modal.hidden = false;
+    ensureSentinels();
     document.body.classList.add('modal-open');
 
     var loadedAt = modalForm.querySelector('[name="formLoadedAt"]');
@@ -274,6 +350,17 @@
 
     var firstField = modal.querySelector('input:not([type="hidden"])');
     if (firstField) firstField.focus();
+
+    // The modal's Turnstile rendered while the dialog was hidden, and a hidden
+    // widget never solves. Kick it now that it is visible: it solves invisibly
+    // in the seconds the visitor spends typing, so the FIRST submit — the lead
+    // capture — carries a token instead of failing with "complete the check".
+    if (window.turnstile) {
+      var widget = modal.querySelector('.cf-turnstile');
+      try {
+        if (widget && !window.turnstile.getResponse(widget)) window.turnstile.reset(widget);
+      } catch (e) { /* not rendered yet — implicit render will pick it up */ }
+    }
 
     document.addEventListener('keydown', onModalKeydown);
   }
@@ -439,7 +526,7 @@
           modalStatus.setAttribute('tabindex', '-1');
           modalStatus.focus();
         }
-        if (window.turnstile) window.turnstile.reset();
+        resetTurnstileIn(modal);
       }).finally(function () {
         modalForm.dataset.busy = '0';
         submit.disabled = false;
