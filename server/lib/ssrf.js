@@ -190,9 +190,28 @@ function intsToIpv4(hi, lo) {
  *   routable public address, or null when it is safe to contact.
  */
 export function ipBlockReason(ip) {
-  const version = net.isIP(ip);
-  if (version === 4) return ipv4Blocked(ip);
-  if (version === 6) return ipv6Blocked(ip);
+  // Accept the bracketed IPv6 spelling. Playwright's `response.serverAddr()`
+  // returns `[2606:4700::1]`, not `2606:4700::1`, and `net.isIP` rejects that —
+  // so the post-navigation peer check in scanner.js received 'not an IP address'
+  // for every site reached over IPv6 and blocked it as a private address. Fly
+  // prefers IPv6 for egress, so on the deployed instance that was most of the
+  // public internet: the scan appeared to work, then died with "That address
+  // cannot be checked."
+  //
+  // Stripping here can only make the check STRICTER, never looser. Unparseable
+  // input was already blocked, so the sole behaviour change is that a bracketed
+  // address now gets classified on its merits: `[::1]` is finally recognised as
+  // loopback rather than blocked-by-accident for being unparseable, and a
+  // bracketed public address stops being a false positive. `net.isIP` still
+  // gates everything after the brackets come off, so a bracketed non-address
+  // keeps failing closed.
+  const candidate =
+    typeof ip === 'string' && ip.length > 2 && ip.startsWith('[') && ip.endsWith(']')
+      ? ip.slice(1, -1)
+      : ip;
+  const version = net.isIP(candidate);
+  if (version === 4) return ipv4Blocked(candidate);
+  if (version === 6) return ipv6Blocked(candidate);
   return 'not an IP address';
 }
 

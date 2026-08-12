@@ -84,6 +84,25 @@ test('rejects IPv6 tunnels that embed a private IPv4 destination', () => {
   assert.equal(ipBlockReason('64:ff9b::8.8.8.8'), null, 'NAT64 wrapping a public IPv4 is fine');
 });
 
+test('accepts the bracketed IPv6 spelling Playwright reports for peer addresses', () => {
+  // response.serverAddr() returns '[2606:4700::1]', not '2606:4700::1'. Treating
+  // that as unparseable made the post-navigation peer check in scanner.js reject
+  // every target reached over IPv6 — which, on an IPv6-preferring host, was most
+  // of the public internet. The scan ran, then failed with 'private_address'.
+  assert.equal(ipBlockReason('[2606:4700:3034::6815:32a2]'), null, 'bracketed public IPv6 is contactable');
+  assert.equal(ipBlockReason('[64:ff9b::8.8.8.8]'), null, 'bracketed NAT64 over a public IPv4 is fine');
+
+  // Stripping brackets must not open a hole: these stay blocked, and now for the
+  // right reason rather than by falling through to 'not an IP address'.
+  assert.ok(ipBlockReason('[::1]'), 'bracketed loopback stays blocked');
+  assert.ok(ipBlockReason('[::ffff:127.0.0.1]'), 'bracketed mapped loopback stays blocked');
+  assert.ok(ipBlockReason('[::ffff:169.254.169.254]'), 'bracketed mapped metadata address stays blocked');
+  assert.ok(ipBlockReason('[fd00::1]'), 'bracketed unique-local stays blocked');
+  assert.ok(ipBlockReason('[not-an-address]'), 'bracketed junk still fails closed');
+  assert.ok(ipBlockReason('[]'), 'empty brackets fail closed');
+  assert.ok(ipBlockReason('[2606:4700::1'), 'a half-bracketed string fails closed');
+});
+
 test('rejects internal-looking hostname suffixes', () => {
   for (const input of ['http://db.internal/', 'http://printer.local/', 'http://foo.lan/', 'http://x.home.arpa/']) {
     blocked(input);
