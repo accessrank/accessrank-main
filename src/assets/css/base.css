@@ -9,12 +9,14 @@
 html { scroll-behavior: smooth; } /* was index.html-only; promoted site-wide, paired with the reduced-motion override below */
 html, body { margin: 0; padding: 0; background: var(--bg); } /* was: background: #14142A; (literal) in index.html — now references the token it duplicated */
 
-/* Anchor landing offset. Without this a fragment link puts the target's own top
-   edge flush against the viewport top, which clips whatever wraps it: /#audit
-   landed the <h2> at y=0 and left the card it sits inside 23px off-screen.
-   Applied to id'd headings and sections so every in-page anchor lands with air
-   above it, not just the audit one. */
-:is(h1, h2, h3, section, article)[id] { scroll-margin-top: 6rem; }
+/* Anchor landing offset — for id'd HEADINGS only. A heading with an id usually
+   sits inside something (the /#audit h2 lives inside the audit card, which the
+   naked anchor clipped 23px off-screen), so headings land with air above them.
+   Sections are deliberately NOT in the list: a nav link to #product, #wcag or
+   #pricing must land exactly at the section boundary — the section's own top
+   padding provides the breathing room, and the 6rem offset was showing a
+   96px strip of the PREVIOUS section above every landing. */
+:is(h1, h2, h3)[id] { scroll-margin-top: 6rem; }
 * { box-sizing: border-box; } /* consolidates index.html's ".site *" (identical rule, narrower scope) */
 button { font-family: inherit; cursor: pointer; border: none; background: transparent; } /* consolidates index.html's ".site button" (identical rule, narrower scope) */
 

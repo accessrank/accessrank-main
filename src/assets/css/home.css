@@ -88,7 +88,10 @@
 
 /* ---- Audit card ---- */
 .audit-card { background: var(--surface); border-radius: 14px; padding: 22px; border: 1px solid var(--blue-500); box-shadow: 0 18px 40px -16px rgba(59,130,246,.55), 0 0 0 1px rgba(59,130,246,.4); }
-.audit-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-bottom: 14px; }
+.audit-head { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-bottom: 10px; }
+/* Explicit, tight margins: with no rule at all this <p> carried the browser's
+ * default 1em top+bottom, which is most of the dead air the card had. */
+.audit-hint { margin: 10px 0 0; }
 /* This is a real <h2> now, not the old decorative "LIVE AUDIT" label, so it is
  * styled as a card heading rather than a micro-caption. */
 .audit-title { font-size: 19px; line-height: 1.2; letter-spacing: -0.4px; color: var(--text); font-weight: 700; text-align: left; margin: 0; }
@@ -113,7 +116,7 @@
  * even 4px short re-creates the layout shift the reserve exists to prevent —
  * the aurora blobs position off document height, so ANY late growth anywhere
  * moves them all and CLS scores the whole ripple. */
-.audit-turnstile { margin: 14px 0 4px; min-height: 70px; }
+.audit-turnstile { margin: 10px 0 2px; min-height: 70px; }
 .scan-btn { background: var(--brand); color: var(--brand-ink); padding: 11px 16px; border-radius: 8px; font-weight: 500; font-size: 13px; white-space: nowrap; }
 .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .scan-status { font-size: 11px; color: var(--text-faint); margin-bottom: 10px; min-height: 14px; display: flex; align-items: center; gap: 6px; } /* TODO(contrast): verify against WCAG 1.4.3 */
@@ -127,7 +130,7 @@
 .check-circle { width: 22px; height: 22px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .row-label { color: var(--text); flex: 1; }
 .row-meta { color: var(--brand); font-size: 12px; font-weight: 500; }
-.empty-state { padding: 24px 12px; text-align: center; color: var(--text-faint); font-size: 13px; } /* TODO(contrast): verify against WCAG 1.4.3 */
+.empty-state { padding: 8px 12px 4px; text-align: center; color: var(--text-faint); font-size: 13px; } /* TODO(contrast): verify against WCAG 1.4.3 */
 
 /* === REPORT BUTTON =====================================================
    FIX(migration): the original rule read
@@ -158,13 +161,13 @@
 @keyframes dr14 { 0% { stroke-dashoffset: 16; } 60%, 100% { stroke-dashoffset: 0; } }
 
 /* ---- Marquee ---- */
-.marquee { margin-top: 26px; background: linear-gradient(110deg, var(--blue-600) 0%, var(--blue-800) 55%, var(--blue-900) 100%); background-size: 200% 100%; animation: marqueeBgShift 14s ease-in-out infinite alternate; color: #FFFFFF; padding: 10px 0; overflow: hidden; position: relative; }
-.marquee::before { content: ''; position: absolute; inset: 0; background: radial-gradient(55% 170% at 85% 50%, rgba(8, 20, 55, 0.55), transparent 65%); pointer-events: none; }
+/* Brand yellow with near-black text (~13:1, comfortably past AA). Replaced
+ * the animated blue gradient + radial haze — a flat brand band needs neither. */
+.marquee { margin-top: 26px; background: var(--brand); color: var(--brand-ink); padding: 10px 0; overflow: hidden; position: relative; }
 .marquee-track { position: relative; }
-@keyframes marqueeBgShift { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
 .marquee-track { display: flex; gap: 56px; animation: mq14 28s linear infinite; white-space: nowrap; width: max-content; }
 .marquee-track .item { font-size: 12px; font-weight: 700; letter-spacing: 4px; display: inline-flex; align-items: center; gap: 56px; }
-.marquee-track .sep { color: #FFFFFF; opacity: 0.45; font-size: 10px; }
+.marquee-track .sep { color: var(--brand-ink); opacity: 0.45; font-size: 10px; }
 @keyframes mq14 { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ---- Risk strip ---- */
@@ -284,7 +287,11 @@
 
 .price-toggle { display: flex; justify-content: center; gap: 0; margin: 0 auto 30px; background: var(--surface); border: 1px solid var(--hairline-strong); border-radius: 100px; padding: 7px; width: max-content; max-width: 100%; }
 .price-toggle button { padding: 9px 18px; border-radius: 100px; font-size: 12px; font-weight: 500; color: var(--text-faint); font-family: inherit; cursor: pointer; transition: background 0.15s ease, color 0.15s ease; white-space: nowrap; } /* TODO(contrast): verify against WCAG 1.4.3 */
-.price-toggle button.active { background: var(--brand); color: var(--brand-ink); }
+/* .is-active, matching what site.js actually toggles. This said `.active`
+ * while the JS set `is-active`, so the selected pill NEVER highlighted —
+ * clicking "After Form 8826 credit" changed the prices but gave no visual
+ * confirmation of which mode was showing. */
+.price-toggle button.is-active { background: var(--brand); color: var(--brand-ink); }
 .price-was { display: none; font-size: 17px; color: var(--text-faint); text-decoration: line-through; font-weight: 700; margin-right: 9px; letter-spacing: -0.5px; } /* TODO(contrast): verify against WCAG 1.4.3 */
 .pricing.show-credit .price-was { display: inline; }
 .price-credit-line { font-size: 11px; color: var(--brand); font-weight: 600; margin: 0; min-height: 0; opacity: 0; transition: opacity 0.18s ease; }
@@ -362,7 +369,6 @@
 /* ---- Reduced motion (homepage-specific selectors; global parts are in base.css) ---- */
 @media (prefers-reduced-motion: reduce) {
   .marquee-track, .pulse-dot, .scan-spinner, .swipe { animation: none !important; }
-  .marquee { background-size: 100% 100%; }
 }
 
 /* ---- Responsive ----

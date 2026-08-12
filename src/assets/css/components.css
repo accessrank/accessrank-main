@@ -28,7 +28,10 @@
  * These were <div> grids in the original. They are real <ul>/<ol> now so screen
  * readers announce "list, 4 items", but that brings the browser's default
  * bullets and 40px inline padding with it. */
-.risk-grid, .pour, .feature-grid, .stats-strip-inner, .pricing-grid,
+/* .stats-strip, not .stats-strip-inner: the markup's <ul> class is
+ * .stats-strip, so the old name never matched and the strip rendered its
+ * native list bullets — the stray dots beside "+23%", "2–4 wks" and "$30K+". */
+.risk-grid, .pour, .feature-grid, .stats-strip, .pricing-grid,
 .criteria-list, .lawsuit-steps, .price-features, .footer-list,
 .marquee-track, .nav-right ul, .job-list, .perks {
   list-style: none;
@@ -350,8 +353,11 @@ body.modal-open { overflow: hidden; }
 
 /* The markup is a plain <dl>, so each question/answer pair is turned into a
  * card by bordering the dt/dd pair rather than by a wrapper element. */
+/* Full content width — same as the lawsuit band ("ALREADY FACING A CLAIM?")
+ * above it: the section's var(--edge) padding provides the side margins, and
+ * the card fills the rest. It was capped at 880px, noticeably narrower than
+ * every neighbouring section. */
 .faq-list {
-  max-width: 880px;
   margin: 0 auto;
   border: 1px solid var(--hairline);
   border-radius: 14px;
@@ -370,7 +376,6 @@ body.modal-open { overflow: hidden; }
   padding: 0 26px 22px;
   font-size: 14px; line-height: 1.7;
   color: var(--text-soft);
-  max-width: 74ch;
 }
 /* Divider between pairs, not above the first one. */
 .faq-list dd + dt { border-top: 1px solid var(--hairline); margin-top: 0; padding-top: 22px; }
