@@ -3,7 +3,31 @@
  * Inter and JetBrains Mono, self-hosted under the SIL Open Font License.
  * Self-hosted rather than loaded from fonts.googleapis.com so that no
  * visitor IP address is transferred to a third party on page load.
+ *
+ * Every weight of a family+subset points at ONE file. Google serves the same
+ * variable-font bytes for each weight query — the five per-weight files this
+ * used to reference were byte-identical, but because their URLs differed the
+ * browser could not know that and downloaded ~48 kB five times on every page
+ * (≈194 kB wasted, and the hero's weight-800 copy arrived last, dragging LCP).
+ * Distinct @font-face blocks per weight remain, so rendering semantics are
+ * unchanged; only the URLs are shared. fetch-fonts.mjs dedupes by content hash
+ * now, so regenerating preserves this shape.
  */
+/* Metric-compatible stand-in shown while Inter downloads. Arial re-shaped to
+ * Inter's metrics (the widely published override set), so the swap changes
+ * glyph shapes but not line boxes — text does not reflow, the document keeps
+ * its height, and the aurora blobs (positioned as percentages of document
+ * height) stay put. Before this, the swap moved copy by a few pixels per
+ * section and CLS billed the entire blob ripple for it. */
+@font-face {
+  font-family: 'Inter-fallback';
+  src: local('Arial');
+  size-adjust: 107.4%;
+  ascent-override: 90.2%;
+  descent-override: 22.48%;
+  line-gap-override: 0%;
+}
+
 @font-face {
   font-family: 'Inter';
   font-style: normal;
@@ -27,7 +51,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/assets/fonts/inter-latin-ext-500.woff2') format('woff2');
+  src: url('/assets/fonts/inter-latin-ext-400.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -36,7 +60,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/assets/fonts/inter-latin-500.woff2') format('woff2');
+  src: url('/assets/fonts/inter-latin-400.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -45,7 +69,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/assets/fonts/inter-latin-ext-600.woff2') format('woff2');
+  src: url('/assets/fonts/inter-latin-ext-400.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -54,7 +78,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/assets/fonts/inter-latin-600.woff2') format('woff2');
+  src: url('/assets/fonts/inter-latin-400.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -63,7 +87,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/assets/fonts/inter-latin-ext-700.woff2') format('woff2');
+  src: url('/assets/fonts/inter-latin-ext-400.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -72,7 +96,7 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('/assets/fonts/inter-latin-700.woff2') format('woff2');
+  src: url('/assets/fonts/inter-latin-400.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -81,7 +105,7 @@
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url('/assets/fonts/inter-latin-ext-800.woff2') format('woff2');
+  src: url('/assets/fonts/inter-latin-ext-400.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -90,7 +114,7 @@
   font-style: normal;
   font-weight: 800;
   font-display: swap;
-  src: url('/assets/fonts/inter-latin-800.woff2') format('woff2');
+  src: url('/assets/fonts/inter-latin-400.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -117,7 +141,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/assets/fonts/jetbrains-mono-latin-ext-500.woff2') format('woff2');
+  src: url('/assets/fonts/jetbrains-mono-latin-ext-400.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -126,7 +150,7 @@
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('/assets/fonts/jetbrains-mono-latin-500.woff2') format('woff2');
+  src: url('/assets/fonts/jetbrains-mono-latin-400.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
@@ -135,7 +159,7 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/assets/fonts/jetbrains-mono-latin-ext-600.woff2') format('woff2');
+  src: url('/assets/fonts/jetbrains-mono-latin-ext-400.woff2') format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
@@ -144,6 +168,6 @@
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('/assets/fonts/jetbrains-mono-latin-600.woff2') format('woff2');
+  src: url('/assets/fonts/jetbrains-mono-latin-400.woff2') format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }

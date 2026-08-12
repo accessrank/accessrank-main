@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -73,16 +74,38 @@ async function main() {
     const faces = parseFaces(css).filter((f) => WANTED_SUBSETS.has(f.subset));
     if (!faces.length) throw new Error(`No woff2 faces parsed for ${family.css}`);
 
+    // Dedupe by content: Google serves the same variable-font bytes for every
+    // weight of a family+subset, under a different URL each time. Writing one
+    // file per weight made the browser download identical bytes five times per
+    // page (URLs differ, so HTTP caching cannot merge them), and the hero's
+    // weight-800 copy arrived last — dragging LCP. One file per unique content,
+    // shared by every weight's @font-face block, keeps rendering semantics
+    // identical while collapsing five requests into one.
+    const seenByHash = new Map();
+
     for (const face of faces) {
       const suffix = face.subset === 'latin' ? 'latin' : 'latin-ext';
       const filename = `${family.slug}-${suffix}-${face.weight}.woff2`;
       const dest = path.join(FONT_DIR, filename);
 
-      if (!fs.existsSync(dest)) {
-        await download(face.src, dest);
+      let servedAs = filename;
+      const tmp = `${dest}.tmp`;
+      await download(face.src, tmp);
+      const content = fs.readFileSync(tmp);
+      const digest = crypto.createHash('sha256').update(content).digest('hex');
+
+      if (seenByHash.has(digest)) {
+        servedAs = seenByHash.get(digest);
+        fs.rmSync(tmp);
+        // A stale per-weight copy from an older run must not linger — nothing
+        // will reference it, and its presence invites re-adding the bug.
+        if (fs.existsSync(dest)) fs.rmSync(dest);
+      } else {
+        seenByHash.set(digest, filename);
+        fs.renameSync(tmp, dest);
         downloaded += 1;
+        bytes += content.length;
       }
-      bytes += fs.statSync(dest).size;
 
       blocks.push([
         '@font-face {',
@@ -90,12 +113,13 @@ async function main() {
         `  font-style: ${face.style};`,
         `  font-weight: ${face.weight};`,
         '  font-display: swap;',
-        `  src: url('/assets/fonts/${filename}') format('woff2');`,
+        `  src: url('/assets/fonts/${servedAs}') format('woff2');`,
         face.unicodeRange ? `  unicode-range: ${face.unicodeRange};` : null,
         '}',
       ].filter(Boolean).join('\n'));
 
-      console.log(`  ${filename.padEnd(36)} ${(fs.statSync(dest).size / 1024).toFixed(1)} kB`);
+      const note = servedAs === filename ? '' : `  (same bytes as ${servedAs})`;
+      console.log(`  ${filename.padEnd(36)} ${(content.length / 1024).toFixed(1)} kB${note}`);
     }
   }
 
@@ -105,7 +129,24 @@ async function main() {
     ' * Inter and JetBrains Mono, self-hosted under the SIL Open Font License.',
     ' * Self-hosted rather than loaded from fonts.googleapis.com so that no',
     ' * visitor IP address is transferred to a third party on page load.',
+    ' *',
+    ' * Every weight of a family+subset points at ONE file: Google serves the',
+    ' * same variable-font bytes per weight, and distinct URLs made the browser',
+    ' * download them five times over (~194 kB wasted per page).',
     ' */',
+    '',
+    '/* Metric-compatible stand-in shown while Inter downloads. Arial re-shaped',
+    ' * to Inter metrics so the swap cannot reflow the page: the aurora blobs',
+    ' * position off document height, and a few pixels of text reflow used to',
+    ' * move every blob and score as layout shift. */',
+    '@font-face {',
+    "  font-family: 'Inter-fallback';",
+    "  src: local('Arial');",
+    '  size-adjust: 107.4%;',
+    '  ascent-override: 90.2%;',
+    '  descent-override: 22.48%;',
+    '  line-gap-override: 0%;',
+    '}',
     '',
   ].join('\n');
 
