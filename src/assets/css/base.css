@@ -8,6 +8,13 @@
 /* ---- Reset ---- */
 html { scroll-behavior: smooth; } /* was index.html-only; promoted site-wide, paired with the reduced-motion override below */
 html, body { margin: 0; padding: 0; background: var(--bg); } /* was: background: #14142A; (literal) in index.html — now references the token it duplicated */
+
+/* Anchor landing offset. Without this a fragment link puts the target's own top
+   edge flush against the viewport top, which clips whatever wraps it: /#audit
+   landed the <h2> at y=0 and left the card it sits inside 23px off-screen.
+   Applied to id'd headings and sections so every in-page anchor lands with air
+   above it, not just the audit one. */
+:is(h1, h2, h3, section, article)[id] { scroll-margin-top: 6rem; }
 * { box-sizing: border-box; } /* consolidates index.html's ".site *" (identical rule, narrower scope) */
 button { font-family: inherit; cursor: pointer; border: none; background: transparent; } /* consolidates index.html's ".site button" (identical rule, narrower scope) */
 
@@ -16,7 +23,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: transp
    background and color. Page-specific leftovers (.site's overflow:hidden;
    body's min-height/overflow-x) stay in home.css / pages.css respectively. */
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  /* Inter-fallback is Arial re-shaped to Inter's metrics (see fonts.css) so
+     the swap to the real Inter cannot reflow the page. */
+  font-family: 'Inter', 'Inter-fallback', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text-soft);
   position: relative;

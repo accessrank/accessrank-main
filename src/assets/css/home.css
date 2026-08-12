@@ -9,13 +9,21 @@
 /* ---- Page wrapper ----
    font-family/background/color moved to base.css's shared "body" rule;
    --edge moved to layout.css's shared container system. This is what's left. */
-.site { overflow: hidden; position: relative; z-index: 0; }
+.site { position: relative; z-index: 0; }
 .site a { text-decoration: none; }
-/* NOTE: .aurora is now position:fixed (see base.css). .site still has
-   overflow:hidden from the original source; some browsers clip
-   position:fixed descendants to an overflow:hidden ancestor that
-   establishes a containing block — verify the aurora still fills the
-   full viewport on the homepage after this migration. */
+/* NO overflow HERE. In legacy/index.html `.site` was a wrapper <div>, where
+ * overflow:hidden was harmless. The shared shell puts the class on <body>
+ * (partials/shell.html), and an <html> with overflow:visible propagates the
+ * BODY's overflow to the viewport — so overflow:hidden here silently killed
+ * wheel and keyboard scrolling on all 16 pages. Anchor links still worked,
+ * because programmatic scrolling ignores it, which is what made it survive
+ * review: the page looked navigable.
+ *
+ * Horizontal clipping is still wanted, and is still in force: base.css and
+ * pages.css both set `body { overflow-x: hidden }`. That is the safe half —
+ * with overflow-y left visible it computes to auto, so the page scrolls
+ * vertically and only the x axis is clipped. The aurora blobs, which are what
+ * overflowed sideways, are clipped by `.aurora`'s own overflow:hidden. */
 
 /* ---- Logo (homepage nav + footer) ----
    Kept separate from auth.css's .logo/.logo-mark: the two sources use
@@ -89,6 +97,23 @@
 .url-input { flex: 1; background: var(--bg); border: 1px solid rgba(240, 237, 229, 0.15); color: var(--text); padding: 11px 14px; border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; }
 .url-input::placeholder { color: var(--text-fainter); } /* TODO(contrast): verify against WCAG 1.4.3 */
 .url-input:focus { border-color: var(--brand); }
+/* Turnstile widget for the scan form.
+ *
+ * It has to be a SECOND widget, inside #audit-card. The page already had one in
+ * #report-modal, but that modal is a sibling of this card and starts `hidden`,
+ * and Cloudflare never solves a widget that is not displayed. Meanwhile
+ * /api/scan calls verifyTurnstile(), which throws `captcha_required` when the
+ * token is missing, and audit.js looks the token up with
+ * `#audit-card [name="cf-turnstile-response"]` — a subtree that contained no
+ * widget at all. Net effect before this fix: every visitor who pressed
+ * "Check my store" got HTTP 400 and the message "Please complete the
+ * verification check and try again". The free scan, which is the entire top of
+ * the funnel, was dead on the live site. */
+/* 70px, not the widget's nominal 65: it renders at 69px here, and a reserve
+ * even 4px short re-creates the layout shift the reserve exists to prevent —
+ * the aurora blobs position off document height, so ANY late growth anywhere
+ * moves them all and CLS scores the whole ripple. */
+.audit-turnstile { margin: 14px 0 4px; min-height: 70px; }
 .scan-btn { background: var(--brand); color: var(--brand-ink); padding: 11px 16px; border-radius: 8px; font-weight: 500; font-size: 13px; white-space: nowrap; }
 .scan-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .scan-status { font-size: 11px; color: var(--text-faint); margin-bottom: 10px; min-height: 14px; display: flex; align-items: center; gap: 6px; } /* TODO(contrast): verify against WCAG 1.4.3 */

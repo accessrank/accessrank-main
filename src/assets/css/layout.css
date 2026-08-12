@@ -81,6 +81,23 @@
   padding: 14px; border-radius: 10px; margin-top: 8px;
   transition: transform .2s var(--ease-out), box-shadow .2s ease, filter .15s ease;
 }
-a.submit-btn, a.submit-btn:hover, a.submit-btn:visited { color: var(--brand-ink); }
+/* Brand-filled buttons keep their dark ink in EVERY link state.
+ *
+ * pages.css has a global `a:hover { color: #FFDF6E }`, and build.mjs concatenates
+ * home.css and pages.css into one stylesheet served to every page — so that rule
+ * reaches the homepage too. On a #FFD23F button it repaints the label pale yellow
+ * on yellow: about 1.1:1 contrast, effectively invisible. WCAG AA needs 4.5:1;
+ * --brand-ink gives ~13:1.
+ *
+ * This previously existed as `a.submit-btn, a.submit-btn:hover, a.submit-btn:visited`
+ * — the same bug, patched on one button only. Listing every brand-filled button
+ * here fixes the class of defect instead of the one instance someone noticed.
+ * axe-core never caught it because it does not evaluate hover states. */
+:is(.btn-primary, .cta-nav, .scan-btn, .submit-btn, .report-cta),
+:is(.btn-primary, .cta-nav, .scan-btn, .submit-btn, .report-cta):hover,
+:is(.btn-primary, .cta-nav, .scan-btn, .submit-btn, .report-cta):focus,
+:is(.btn-primary, .cta-nav, .scan-btn, .submit-btn, .report-cta):focus-visible,
+:is(.btn-primary, .cta-nav, .scan-btn, .submit-btn, .report-cta):active,
+:is(.btn-primary, .cta-nav, .scan-btn, .submit-btn, .report-cta):visited { color: var(--brand-ink); }
 .submit-btn:hover { filter: brightness(1.04); transform: translateY(-2px); box-shadow: 0 14px 30px -14px rgba(var(--brand-rgb), 0.7); }
 .submit-btn:active { transform: translateY(0); }
