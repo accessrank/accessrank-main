@@ -83,7 +83,12 @@ try {
       const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } });
       try {
         await page.addInitScript({ content: AXE });
-        const response = await page.goto(base + route, { waitUntil: 'networkidle', timeout: 20_000 });
+        // 'load', not 'networkidle': a build with the Turnstile key ships a
+        // widget that keeps its challenge connections open, so networkidle
+        // never arrives and the whole gate times out. The settle wait below
+        // gives deferred scripts and the widget a beat to mount before axe runs.
+        const response = await page.goto(base + route, { waitUntil: 'load', timeout: 20_000 });
+        await page.waitForTimeout(700);
         if (!response || response.status() >= 400) {
           failures.push({ route, viewport: viewport.name, id: 'http', help: `HTTP ${response?.status()}`, nodes: 0 });
           continue;

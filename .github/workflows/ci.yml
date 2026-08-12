@@ -28,6 +28,13 @@ jobs:
         run: npm run build
         env:
           SITE_URL: https://accessrank.ai
+          # Cloudflare's official always-passes TEST site key. Without a key the
+          # {{#if turnstileSiteKey}} blocks render empty, so every gate below
+          # audited a variant of the site that never ships — which is exactly
+          # how a broken-captcha bug reached production unseen. The server side
+          # of the tests stays keyless; dist/csp.json tells it the markup
+          # carries the widget so its CSP allows challenges.cloudflare.com.
+          TURNSTILE_SITE_KEY: 1x00000000000000000000AA
 
       - name: Unit and integration tests
         run: npm test

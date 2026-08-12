@@ -7,8 +7,10 @@ primary_region = "iad"
   [build.args]
     # Baked into canonical URLs and the sitemap at build time.
     SITE_URL = "https://accessrank.ai"
-    # Public key, safe to commit. Set to your real Turnstile site key.
-    TURNSTILE_SITE_KEY = ""
+    # Public key, safe to commit. Must ALSO be present under [env] — build args
+    # exist only while the image is built, and the server checks for this key at
+    # runtime to decide whether the captcha is active.
+    TURNSTILE_SITE_KEY = "0x4AAAAAAENYC8Br8Jb-rluz"
     PLAUSIBLE_DOMAIN = ""
 
 [env]
@@ -17,6 +19,14 @@ primary_region = "iad"
   SITE_URL = "https://accessrank.ai"
   # Fly puts exactly one proxy hop in front of the app.
   TRUST_PROXY = "1"
+  # Public, and required at RUNTIME too: config.turnstile.enabled needs both keys
+  # present or the app refuses to boot in production. The build arg above does
+  # not survive into the running container.
+  TURNSTILE_SITE_KEY = "0x4AAAAAAENYC8Br8Jb-rluz"
+  # Not secrets — plain addresses, so they belong here rather than in fly secrets.
+  # Temporary: point at the Crier mailbox until info@accessrank.ai actually exists.
+  EMAIL_REPLY_TO = "aws@crierpr.com"
+  SALES_INBOX = "aws@crierpr.com"
   SCAN_CONCURRENCY = "2"
   SCAN_MAX_PAGES = "3"
   LIMIT_REPORTS_PER_EMAIL = "1"
