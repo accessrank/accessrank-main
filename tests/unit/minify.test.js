@@ -39,6 +39,28 @@ test('comments are removed but license banners are kept', () => {
   assert.match(minifyCss('/*! (c) me */ .a { color: red; }'), /^\/\*! \(c\) me \*\//);
 });
 
+test('an apostrophe inside a comment cannot shield it from stripping', () => {
+  // Regression: "index.html's <style> block" opened a phantom string under the
+  // old per-segment order, and prose comments leaked into the shipped CSS.
+  const css = "/* from legacy/index.html's <style> block */\n.a { color: red; }\n/* no \".btn-ghost\" class exists */\n.b { color: blue; }";
+  const out = minifyCss(css);
+  assert.equal(out.includes('legacy'), false, 'first comment is gone');
+  assert.equal(out.includes('btn-ghost'), false, 'quoted-word comment is gone');
+  assert.match(out, /\.a\{color: red\}/);
+  assert.match(out, /\.b\{color: blue\}/);
+});
+
+test('comment markers inside genuine strings are not treated as comments', () => {
+  // The space after `content:` dies at the protected-string boundary (segment
+  // trim) — same as before this fix, and valid CSS either way.
+  assert.equal(minifyCss('.a::before { content: "/* keep me */"; }'), '.a::before{content:"/* keep me */"}');
+  assert.equal(minifyCss(".a::before { content: 'it\\'s fine'; }"), ".a::before{content:'it\\'s fine'}");
+});
+
+test('an unterminated comment swallows to EOF instead of leaking', () => {
+  assert.equal(minifyCss('.a { color: red; } /* trailing prose that never closes'), '.a{color: red}');
+});
+
 test('structural whitespace is collapsed', () => {
   assert.equal(minifyCss('.a  ,  .b   {  color : red ;  }'), '.a,.b{color : red}');
   assert.equal(minifyCss('.a {\n  color: red;\n  background: blue;\n}'), '.a{color: red;background: blue}');
