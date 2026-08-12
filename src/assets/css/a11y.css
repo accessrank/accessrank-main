@@ -21,13 +21,17 @@
  *
  * `a:not([class])` selects exactly the plain prose links. Every button-styled or
  * component link on the site carries a class and keeps its own treatment. */
-:where(p, li, dd, dt, blockquote, figcaption, cite, td, th) a:not([class]) {
+/* `label` is in the list because the consent checkboxes phrase their link
+ * inside running label text ("...accept the privacy policy") — the exact
+ * pattern this rule exists for. It was missing, so the site's own scanner
+ * flagged those links as needs-review on every form page. */
+:where(p, li, dd, dt, blockquote, figcaption, cite, td, th, label) a:not([class]) {
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 0.18em;
 }
-:where(p, li, dd, dt, blockquote, figcaption, cite, td, th) a:not([class]):hover,
-:where(p, li, dd, dt, blockquote, figcaption, cite, td, th) a:not([class]):focus-visible {
+:where(p, li, dd, dt, blockquote, figcaption, cite, td, th, label) a:not([class]):hover,
+:where(p, li, dd, dt, blockquote, figcaption, cite, td, th, label) a:not([class]):focus-visible {
   text-decoration-thickness: 2px;
 }
 
