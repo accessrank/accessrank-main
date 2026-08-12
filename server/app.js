@@ -36,7 +36,29 @@ const scriptSrc = ["'self'"];
 const frameSrc = ["'none'"];
 const connectSrc = ["'self'"];
 
-if (config.turnstile.enabled) {
+/**
+ * The build inlines the stylesheet into every page's <head> to cut the
+ * render-blocking request, and records the block's sha256 in dist/csp.json.
+ * Allowing that exact hash — never 'unsafe-inline' — keeps the "no inline
+ * styles except the one the build produced" guarantee. If the manifest is
+ * missing (dist not built yet), style-src stays 'self' alone and the health
+ * endpoint's site:false will already be flagging the missing build.
+ */
+const styleSrc = ["'self'"];
+let builtWithTurnstile = false;
+try {
+  const manifest = JSON.parse(fs.readFileSync(path.join(DIST, 'csp.json'), 'utf8'));
+  if (typeof manifest.styleHash === 'string' && /^sha256-[A-Za-z0-9+/=]+$/.test(manifest.styleHash)) {
+    styleSrc.push(`'${manifest.styleHash}'`);
+  }
+  builtWithTurnstile = manifest.turnstileInMarkup === true;
+} catch { /* no dist yet — dev without a build, or tests that never serve pages */ }
+
+// CSP must match what the SERVED PAGES contain, and the widget markup is baked
+// at build time — so the build's manifest gets a vote, not only this server's
+// own env. Otherwise a keyed build behind a keyless server (integration tests,
+// local smoke runs) logs a CSP violation on every page load.
+if (config.turnstile.enabled || builtWithTurnstile) {
   scriptSrc.push('https://challenges.cloudflare.com');
   frameSrc.length = 0;
   frameSrc.push('https://challenges.cloudflare.com');
@@ -57,8 +79,8 @@ app.use(helmet({
       // Fonts are self-hosted, so no font CDN needs allowing — which also keeps
       // visitor IPs from reaching a third party, as the privacy policy promises.
       fontSrc: ["'self'"],
-      // No inline styles: the build emits one hashed stylesheet.
-      styleSrc: ["'self'"],
+      // 'self' plus the sha256 of the one <style> block the build inlines.
+      styleSrc,
       scriptSrc,
       scriptSrcAttr: ["'none'"],
       imgSrc: ["'self'", 'data:'],

@@ -163,6 +163,22 @@ function build() {
   fs.writeFileSync(path.join(DIST, 'assets', 'css', cssName), css);
   fs.writeFileSync(path.join(DIST, 'assets', 'js', jsName), jsSource);
 
+  // The stylesheet is inlined into every page's <head> (see shell.html), which
+  // removes the one render-blocking request from the critical path. CSP must
+  // then allow exactly that block and nothing else: the build records the
+  // sha256 of the inlined text here, and server/app.js folds it into
+  // style-src. The hash covers the <style> element's exact contents, so any
+  // drift between what was built and what is served fails closed — the page
+  // loses its styles rather than the policy quietly widening.
+  const styleHash = `sha256-${crypto.createHash('sha256').update(css, 'utf8').digest('base64')}`;
+  // Whether the built pages ship the Turnstile <script> + widgets is a
+  // BUILD-time fact, so it is recorded here and the server's CSP follows it.
+  // Deciding from the server's own env instead caused a real mismatch: a keyed
+  // build served by a keyless server (integration tests, local runs) blocked
+  // challenges.cloudflare.com and every page logged a CSP violation.
+  const turnstileInMarkup = Boolean(process.env.TURNSTILE_SITE_KEY);
+  fs.writeFileSync(path.join(DIST, 'csp.json'), JSON.stringify({ styleHash, turnstileInMarkup }, null, 2));
+
   const copied =
     copyDir(path.join(SRC, 'assets', 'img'), path.join(DIST, 'assets', 'img')) +
     copyDir(path.join(SRC, 'assets', 'fonts'), path.join(DIST, 'assets', 'fonts')) +
@@ -189,7 +205,7 @@ function build() {
       nav: site.nav,
       footer: site.footer,
       jobs: site.jobs,
-      cssHref: `/assets/css/${cssName}`,
+      inlineCss: css,
       jsHref: `/assets/js/${jsName}`,
       canonical: `${SITE_URL}${page.url === '/' ? '/' : page.url}`,
       siteUrl: SITE_URL,
@@ -230,7 +246,7 @@ function build() {
       };
       const context = {
         site, page, job, nav: site.nav, footer: site.footer,
-        cssHref: `/assets/css/${cssName}`, jsHref: `/assets/js/${jsName}`,
+        inlineCss: css, jsHref: `/assets/js/${jsName}`,
         canonical: `${SITE_URL}${page.url}`, siteUrl: SITE_URL,
         year: new Date().getFullYear(), isHome: false,
         turnstileSiteKey: process.env.TURNSTILE_SITE_KEY || '',

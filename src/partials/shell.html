@@ -29,9 +29,15 @@
   <link rel="alternate icon" href="/assets/img/favicon-32.png" type="image/png" sizes="32x32">
   <link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
 
+  <!-- One preload covers EVERY Inter weight: the woff2 is a variable font and
+       all weights share this file (see fonts.css). This used to preload -400
+       and -700 while the hero's LCP text is weight 800 — warming two copies of
+       the same bytes and leaving the copy that decided LCP to load last. -->
   <link rel="preload" href="/assets/fonts/inter-latin-400.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="/assets/fonts/inter-latin-700.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="stylesheet" href="{{ cssHref }}">
+  <!-- The stylesheet is inlined by build.mjs (see inlineCss there): one fewer
+       render-blocking round trip, allowed by CSP via a sha256 hash the build
+       writes to dist/csp.json and the server folds into style-src. -->
+  <style>{{{ inlineCss }}}</style>
 
   {{{ structuredData }}}
   {{#if plausibleDomain}}<script defer data-domain="{{ plausibleDomain }}" src="{{ plausibleSrc }}"></script>{{/if}}
